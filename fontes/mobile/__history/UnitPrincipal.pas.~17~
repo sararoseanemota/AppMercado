@@ -1,0 +1,118 @@
+unit UnitPrincipal;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
+  FMX.Layouts, FMX.Controls.Presentation, FMX.StdCtrls, FMX.Edit,
+  FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base,
+  FMX.ListView;
+
+type
+  TFrmPrincipal = class(TForm)
+    lytToolBar: TLayout;
+    Image1: TImage;
+    Image2: TImage;
+    lblAcessar: TLabel;
+    lytPesquisa: TLayout;
+    StyleBook1: TStyleBook;
+    rctPesquisa: TRectangle;
+    edtPesquisa: TEdit;
+    Image3: TImage;
+    btnBuscar: TButton;
+    lytSwitch: TLayout;
+    rcSwitch: TRectangle;
+    rct: TRectangle;
+    Label1: TLabel;
+    Label2: TLabel;
+    lvMercado: TListView;
+    imgShop: TImage;
+    ImgTaxa: TImage;
+    ImgPedidoMinimo: TImage;
+    procedure FormShow(Sender: TObject);
+    procedure lvMercadoItemClick(const Sender: TObject;
+      const AItem: TListViewItem);
+
+  private
+    procedure AddMercadoLv(id_mercado: integer; nome, endereco: string;
+      tx_entrega, vl_min_ped: double);
+    procedure ListarMercados;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmPrincipal: TFrmPrincipal;
+
+implementation
+
+{$R *.fmx}
+
+uses UnitMercado;
+
+procedure TFrmPrincipal.AddMercadoLv(id_mercado : integer;
+                                      nome, endereco : string;
+                                      tx_entrega, vl_min_ped: double);
+var
+  img : TListItemImage;
+  txt : TListItemText;
+begin
+  with lvMercado.Items.Add do
+  begin
+    Height := 120;
+
+    Tag :=  id_mercado; //propriedade para salvar informações do tipo inteiro
+
+    img :=  TListItemImage(Objects.FindDrawable('imgShop'));
+    img.Bitmap := imgShop.Bitmap;   // objeto fixo no form
+
+    img :=  TListItemImage(Objects.FindDrawable('imgTaxa'));
+    img.Bitmap := ImgTaxa.Bitmap;   // objeto fixo no form
+
+    img :=  TListItemImage(Objects.FindDrawable('imgCompraMin'));
+    img.Bitmap := ImgPedidoMinimo.Bitmap;   // objeto fixo no form
+
+    txt:= TListItemText(Objects.FindDrawable('txtNome'));
+    txt.Text := nome;
+
+    txt:= TListItemText(Objects.FindDrawable('txtEndereco'));
+    txt.Text := endereco;
+
+    txt:= TListItemText(Objects.FindDrawable('txtTaxa'));
+    txt.Text := 'Taxa de entrega: ' + FormatFloat('R$#,##0.00', tx_entrega);
+
+    txt:= TListItemText(Objects.FindDrawable('txtCompraMin'));
+    txt.Text := 'Compra mínima: ' + FormatFloat('R$#,##0.00', vl_min_ped);
+
+  end;
+
+end;
+
+
+//array
+procedure TFrmPrincipal.ListarMercados;
+begin
+  AddMercadoLv(1, 'Pão de Açúcar', 'CNB 7, lote 02, lojas 01-10', 10, 50);
+  AddMercadoLv(1, 'Pão de Açúcar', 'CNB 7, lote 02, lojas 01-10', 10, 50);
+  AddMercadoLv(1, 'Pão de Açúcar', 'CNB 7, lote 02, lojas 01-10', 10, 50);
+  AddMercadoLv(1, 'Pão de Açúcar', 'CNB 7, lote 02, lojas 01-10', 10, 50);
+end;
+
+procedure TFrmPrincipal.lvMercadoItemClick(const Sender: TObject;
+  const AItem: TListViewItem);
+begin
+  if NOT Assigned(FrmMercado) then
+      Application.CreateForm(TFrmMercado, FrmMercado);
+
+  FrmMercado.Show;
+
+end;
+
+procedure TFrmPrincipal.FormShow(Sender: TObject);
+begin
+  ListarMercados;
+end;
+
+end.
