@@ -12,11 +12,11 @@ uses
 type
   TFrmPrincipal = class(TForm)
     lytToolBar: TLayout;
-    Image1: TImage;
-    Image2: TImage;
+    imgMenu: TImage;
+    ImgCarrinho: TImage;
     lblAcessar: TLabel;
     lytPesquisa: TLayout;
-    StyleBook1: TStyleBook;
+    StyleBook: TStyleBook;
     rctPesquisa: TRectangle;
     edtPesquisa: TEdit;
     Image3: TImage;
@@ -31,16 +31,31 @@ type
     ImgTaxa: TImage;
     ImgPedidoMinimo: TImage;
     AnimationFiltro: TFloatAnimation;
+    rectMenu: TRectangle;
+    imgPerfil: TImage;
+    imgVoltarMenu: TImage;
+    lblNome: TLabel;
+    lblEmail: TLabel;
+    rctMeusPedidos: TRectangle;
+    lblMeusPedidos: TLabel;
+    rctPerfil: TRectangle;
+    lblPerfil: TLabel;
+    rctSair: TRectangle;
+    lblSair: TLabel;
     procedure FormShow(Sender: TObject);
     procedure lvMercadoItemClick(const Sender: TObject;
       const AItem: TListViewItem);
     procedure lblCasaClick(Sender: TObject);
+    procedure ImgCarrinhoClick(Sender: TObject);
+    procedure imgMenuClick(Sender: TObject);
+    procedure imgVoltarMenuClick(Sender: TObject);
 
   private
     procedure AddMercadoLv(id_mercado: integer; nome, endereco: string;
       tx_entrega, vl_min_ped: double);
     procedure ListarMercados;
     procedure SelecionarEntrega(lbl: Tlabel);
+    procedure OpenMenu(ind: Boolean);
     { Private declarations }
   public
     { Public declarations }
@@ -53,7 +68,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnitMercado;
+uses UnitMercado, UnitCarrinho;
 
 procedure TFrmPrincipal.AddMercadoLv(id_mercado : integer;
                                       nome, endereco : string;
@@ -116,6 +131,30 @@ end;
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
   ListarMercados;
+end;
+
+//clicando na imagem carrinho e carregando o form Carrinho
+procedure TFrmPrincipal.ImgCarrinhoClick(Sender: TObject);
+begin
+  if not Assigned(FrmCarrinho) then
+    Application.CreateForm(TFrmCarrinho, FrmCarrinho);
+
+  FrmCarrinho.Show;
+end;
+
+procedure TFrmPrincipal.OpenMenu(ind : Boolean);
+begin
+  rectMenu.Visible := ind;
+end;
+
+procedure TFrmPrincipal.imgMenuClick(Sender: TObject);
+begin
+  OpenMenu(true);
+end;
+
+procedure TFrmPrincipal.imgVoltarMenuClick(Sender: TObject);
+begin
+  OpenMenu(false);
 end;
 
 procedure TFrmPrincipal.SelecionarEntrega(lbl : Tlabel);

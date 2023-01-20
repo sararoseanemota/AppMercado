@@ -8,15 +8,17 @@ uses
   UnitMercado in 'UnitMercado.pas' {FrmMercado},
   Frame.ProdutoCard in 'frames\Frame.ProdutoCard.pas' {FrameProdutoCard: TFrame},
   UnitSplash in 'UnitSplash.pas' {FrmSplash},
-  UnitProduto in 'UnitProduto.pas' {FrmProduto};
+  UnitProduto in 'UnitProduto.pas' {FrmProduto},
+  UnitCarrinho in 'UnitCarrinho.pas' {FrmCarrinho},
+  Fram.ProdutoLista in 'frames\Fram.ProdutoLista.pas' {FrameProdutoLista: TFrame},
+  UnitPedido in 'UnitPedido.pas' {FrmPedidos};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TFrmPrincipal, FrmPrincipal);
-  Application.CreateForm(TFrmMercado, FrmMercado);
-  Application.CreateForm(TFrmSplash, FrmSplash);
-  Application.CreateForm(TFrmProduto, FrmProduto);
+  Application.CreateForm(TFrmCarrinho, FrmCarrinho);
+  Application.CreateForm(TFrmPedidos, FrmPedidos);
   Application.Run;
 end.

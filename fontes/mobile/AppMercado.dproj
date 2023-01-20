@@ -216,6 +216,19 @@
             <Form>FrmProduto</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="UnitCarrinho.pas">
+            <Form>FrmCarrinho</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
+        <DCCReference Include="frames\Fram.ProdutoLista.pas">
+            <Form>FrameProdutoLista</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="UnitPedido.pas">
+            <Form>FrmPedidos</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
