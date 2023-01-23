@@ -48,6 +48,7 @@ implementation
 uses
   UnitPrincipal, Fram.ProdutoLista;
 
+//rotina
 procedure TFrmCarrinho.AddProduto(id_produto: integer; descricao: string; qtd, valor_unit : double; foto : TStream);
 var
   item : TListBoxItem;

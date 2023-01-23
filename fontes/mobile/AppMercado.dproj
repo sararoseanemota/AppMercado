@@ -229,6 +229,10 @@
             <Form>FrmPedidos</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="UnitPedidoDetalhe.pas">
+            <Form>FrmPedidoDetalhe</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

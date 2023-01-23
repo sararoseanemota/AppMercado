@@ -49,6 +49,7 @@ type
     procedure ImgCarrinhoClick(Sender: TObject);
     procedure imgMenuClick(Sender: TObject);
     procedure imgVoltarMenuClick(Sender: TObject);
+    procedure rctMeusPedidosClick(Sender: TObject);
 
   private
     procedure AddMercadoLv(id_mercado: integer; nome, endereco: string;
@@ -68,8 +69,9 @@ implementation
 
 {$R *.fmx}
 
-uses UnitMercado, UnitCarrinho;
+uses UnitMercado, UnitCarrinho, UnitPedido;
 
+//list view
 procedure TFrmPrincipal.AddMercadoLv(id_mercado : integer;
                                       nome, endereco : string;
                                       tx_entrega, vl_min_ped: double);
@@ -145,6 +147,15 @@ end;
 procedure TFrmPrincipal.OpenMenu(ind : Boolean);
 begin
   rectMenu.Visible := ind;
+end;
+
+procedure TFrmPrincipal.rctMeusPedidosClick(Sender: TObject);
+begin
+  // ao clicar no menu Meus Pedidos
+  if NOT Assigned(FrmPedidos) then
+    Application.CreateForm(TFrmPedidos, FrmPedidos);
+  OpenMenu(false);   //fechando o menu
+  FrmPedidos.Show;   //exibir formulário
 end;
 
 procedure TFrmPrincipal.imgMenuClick(Sender: TObject);
