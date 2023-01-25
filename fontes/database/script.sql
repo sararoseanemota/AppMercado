@@ -1,3 +1,14 @@
+ALTER USER 'root'@'localhost' identified with mysql_native_password by '12345';
+flush privileges;
+
+alter table mercado add ind_entrega char(1); /*faz entrega*/
+alter table mercado add ind_retira char (1); /*retirar na loja*/
+
+select * from mercado;
+
+alter table pedido drop column ind_entrega ; 
+alter table pedido drop column ind_retira ;
+
 create database meu_mercado 
 default character set utf8
 default collate utf8_general_ci;
@@ -31,6 +42,8 @@ create table mercado(
     dt_cadastro datetime,
     vl_entrega decimal(5, 2),
     vl_compra_min decimal(9, 2),
+    ind_entrega char(1), /*faz entrega*/
+    ind_retira char (1), /*retirar na loja*/
     
     primary key(id_mercado)
 ) default charset = utf8;
