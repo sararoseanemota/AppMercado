@@ -13,8 +13,7 @@ uses
   Fram.ProdutoLista in 'frames\Fram.ProdutoLista.pas' {FrameProdutoLista: TFrame},
   UnitPedido in 'UnitPedido.pas' {FrmPedidos},
   UnitPedidoDetalhe in 'UnitPedidoDetalhe.pas' {FrmPedidoDetalhe},
-  DataModule.Usuario in 'dataModule\DataModule.Usuario.pas' {DmUsuario: TDataModule},
-  uLoading in 'Units\uLoading.pas';
+  DataModule.Usuario in 'dataModule\DataModule.Usuario.pas' {DataModule2: TDataModule};
 
 {$R *.res}
 
@@ -24,6 +23,6 @@ begin
   Application.CreateForm(TFrmCarrinho, FrmCarrinho);
   Application.CreateForm(TFrmPedidos, FrmPedidos);
   Application.CreateForm(TFrmPedidoDetalhe, FrmPedidoDetalhe);
-  Application.CreateForm(TDmUsuario, DmUsuario);
+  Application.CreateForm(TDataModule2, DataModule2);
   Application.Run;
 end.

@@ -16,8 +16,8 @@ type
     imgLogo: TImage;
     lytLogin: TLayout;
     lblAcessar: TLabel;
-    edtEmail: TEdit;
-    edtSenha: TEdit;
+    edtLoginEmail: TEdit;
+    edtLoginSenha: TEdit;
     btnLogin: TButton;
     lblCrieAgora: TLabel;
     imgConta1Login: TImage;
@@ -54,9 +54,7 @@ type
     edtUF: TEdit;
     rctCidade: TRectangle;
     edtCidade: TEdit;
-    procedure btnLoginClick(Sender: TObject);
   private
-    procedure ThreadLoginTerminate(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -67,43 +65,9 @@ var
 
 implementation
 
-{$R *.fmx}
-
 uses
-  DataModule.Usuario, UnitPrincipal;
+  DataModule.Usuario;
 
-procedure TFrmLogin.ThreadLoginTerminate(Sender: TObject);
-begin
-  TLoading.Hide; //parar de exibir a bolinha executando
-  if Sender is TThread then
-  begin
-    if Assigned(TThread(Sender).FatalException) then
-    begin
-        ShowMessage(Exception(TThread(sender).FatalException).Message);
-        Exit;
-    end;
-  end;
-
-  //Abrir o form Principal...
-  if NOT Assigned(FrmPrincipal) then
-    Application.CreateForm(TFrmPrincipal, FrmPrincipal);
-
-  FrmPrincipal.Show;
-end;
-
-procedure TFrmLogin.btnLoginClick(Sender: TObject);
-var
-  t : TThread;
-begin
-  TLoading.Show(FrmLogin, '');
-
-  t := TThread.CreateAnonymousThread(procedure
-  begin
-    DmUsuario.Login(edtEmail.Text, edtSenha.Text);
-  end);
-
-  t.OnTerminate := ThreadLoginTerminate; //rotina de erro
-  t.Start;
-end;
+{$R *.fmx}
 
 end.

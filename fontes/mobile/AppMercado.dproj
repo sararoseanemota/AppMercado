@@ -233,6 +233,12 @@
             <Form>FrmPedidoDetalhe</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="dataModule\DataModule.Usuario.pas">
+            <Form>DmUsuario</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Units\uLoading.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -13,6 +13,9 @@ create database meu_mercado
 default character set utf8
 default collate utf8_general_ci;
 
+update mercado set nome = 'Pão' where id_mercado = 1;
+
+
 /*-------------------------------------------------------------*/
 
 create table usuario(
@@ -117,6 +120,15 @@ values('João Silva', 'joao@teste.com.br', '12345', 'Av Interlagos, 555', 'Inter
 insert into mercado(nome, endereco, bairro, cidade, uf, cep, dt_cadastro, vl_entrega, vl_compra_min)
 values('Pão de Açúcar', 'Av. Interlagos, 850', 'Interlagos', 'São Paulo', 'SP', '05410-010', current_timestamp(), 8.50, 30);
 
+insert into mercado(nome, endereco, bairro, cidade, uf, cep, dt_cadastro, vl_entrega, vl_compra_min, ind_entrega, ind_retira)
+values('DiaAdia', 'Av. Paulista, 10', 'Zona Leste', 'São Paulo', 'SP', '05310-020', current_timestamp(), 15.99, 100, 'S', 'S');
+
+select * from mercado;
+select * from categoria;
+
+update mercado set ind_entrega = 'N', ind_retira = 'N' where id_mercado = 1;
+
+
 insert into produto_categoria(descricao, ordem) values('Alimentos', 1);
 insert into produto_categoria(descricao, ordem) values('Bebidas', 2);
 insert into produto_categoria(descricao, ordem) values('Limpeza', 3);
@@ -140,8 +152,12 @@ values(2, 'Cerveja Heineken Lata', 'O processo de fermentação da Heineken, a e
 insert into pedido(id_mercado, id_usuario, dt_pedido, vl_subtotal, vl_entrega, vl_total, endereco, bairro, cidade, uf, cep)
 values(1, 1, current_timestamp(), 77.10, 8.50, 85.60, 'Av Paulista, 1500', 'Bela Vista', 'São Paulo', 'SP', '03015-500');
 
-insert into pedido_item(id_pedido, id_produto, qtd, vl_unitario, vl_total) values(1, 1, 2, 9.75, 19.50);
-insert into pedido_item(id_pedido, id_produto, qtd, vl_unitario, vl_total) values(1, 3, 12, 4.80, 57.60);
+insert into pedido(id_mercado, id_usuario, dt_pedido, vl_subtotal, vl_entrega, vl_total, endereco, bairro, cidade, uf, cep)
+values(1, 2, current_timestamp(), 77.10, 8.50, 85.60, 'Av Paulista, 1500', 'Bela Vista', 'São Paulo', 'SP', '03015-500');
+
+insert into pedido_item(id_pedido, id_produto, qtd, vl_unitario, vl_total) values(3, 1, 2, 9.75, 19.50);
+insert into pedido_item(id_pedido, id_produto, qtd, vl_unitario, vl_total) values(3, 3, 12, 4.80, 57.60);
+
 
 /*-------------------------------------------------------------*/
 
@@ -151,6 +167,18 @@ select * from produto_categoria;
 select * from produto;
 select * from pedido;
 select * from pedido_item;
+
+select distinct c.id_categoria, c.descricao
+from produto_categoria c 
+join produto p on (p.id_categoria = c.id_categoria)
+where p.id_mercado = 1
+order by c.ordem;
+
+select p.*
+from produto p
+where p.id_mercado = 1
+and p.nome like '%Café%'
+and p.id_categoria = 1;
 
 
 
