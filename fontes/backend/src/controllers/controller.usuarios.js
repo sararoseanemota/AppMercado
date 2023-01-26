@@ -4,7 +4,6 @@ import db from "../config/database.js";
 
 const controllerUsuarios = Router();
 
-//rotas - Query Params (/clientes?ordem=nome&top=100)...
 //validação de login 
 controllerUsuarios.post("/usuarios/login", function(request, response){
     //body corpo da requisição
@@ -73,6 +72,28 @@ controllerUsuarios.put("/usuarios/:id_usuario", function(request, response){
         }
     });
 });
+
+//listando dados de um pedido
+controllerUsuarios.get("/usuarios/:id_usuario/pedidos", function(request, response){
+    let filtro = []
+    let ssql = "select * from pedido where id_usuario = ? " 
+
+    filtro.push(request.params.id_usuario)
+
+    if (request.query.id_pedido){
+        ssql+= "and id_pedido = ? ";
+        filtro.push(request.query.id_pedido) //acessando e inserindo os dados na array filtro
+    }
+
+    db.query(ssql,filtro, function(err, result){
+        if (err){
+            return response.status(500).send(err);
+        }else{
+            return response.status(result.length > 0 ? 200 : 404).json(result);
+        }
+    });
+});
+
 
 //TAREFAS........
 //POST -> "/usuarios/cadastro"
