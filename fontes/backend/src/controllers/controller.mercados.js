@@ -98,3 +98,4 @@ controllerMercados.get("/mercados/:id_mercado/produtos", function(request, respo
 
 //exportar o módulo padrão controle de mercados para ter acesso
 export default controllerMercados;
+
