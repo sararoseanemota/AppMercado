@@ -7,6 +7,7 @@ import controllerProdutos from "./controllers/controller.produtos.js";
 import controllerPedidos from "./controllers/controller.pedidos.js";
 import BasicAuth from "./config/basic-auth.js";
 
+
 //não modificar a variavel e instanciando a variável e recebendo o package express
 const app = express();
 
@@ -17,7 +18,8 @@ app.use(express.json());
 app.use(cors());
 
 // Basic Auth
-app.use(BasicAuth); //para continuar a execução 
+app.use(BasicAuth); //para continuar a execução
+
 //Controllers
 app.use(controllerUsuarios);
 app.use(controllerMercados);

@@ -20,10 +20,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.CreateForm(TFrmPrincipal, FrmPrincipal);
-  Application.CreateForm(TFrmCarrinho, FrmCarrinho);
-  Application.CreateForm(TFrmPedidos, FrmPedidos);
-  Application.CreateForm(TFrmPedidoDetalhe, FrmPedidoDetalhe);
   Application.CreateForm(TDmUsuario, DmUsuario);
+  Application.CreateForm(TFrmLogin, FrmLogin);
   Application.Run;
 end.

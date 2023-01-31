@@ -160,6 +160,7 @@ insert into pedido_item(id_pedido, id_produto, qtd, vl_unitario, vl_total) value
 
 
 /*-------------------------------------------------------------*/
+delete from usuario where id_usuario > 3;
 
 select * from usuario;
 select * from mercado;

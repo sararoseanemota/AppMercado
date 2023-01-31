@@ -33,6 +33,7 @@ controllerUsuarios.post("/usuarios/cadastro", function(request, response){
         if (err){
             return response.status(500).send(err);
         }else{
+            //return response.status(201).json(result);
             return response.status(201).json({id_usuario: result.insertId});//o id do usuario gerado automaticamente 
         }
     });

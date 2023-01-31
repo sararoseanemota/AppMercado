@@ -24,7 +24,7 @@ type
     lytConta1: TLayout;
     lblCriarNovaConta: TLabel;
     btnProximo: TButton;
-    lblConta1: TLabel;
+    lblLogin: TLabel;
     lblPasso1: TLabel;
     imgConta2Logo: TImage;
     lytConta2: TLayout;
@@ -39,22 +39,27 @@ type
     rctConta1Nome: TRectangle;
     edtNome: TEdit;
     rctConta1Senha: TRectangle;
-    edtConta1Senha: TEdit;
+    edtContaSenha: TEdit;
     rctConta1Email: TRectangle;
     edtContaEmail: TEdit;
     rctCep: TRectangle;
     edtCep: TEdit;
     rctEndereco: TRectangle;
     edtEndereco: TEdit;
-    rctNumero: TRectangle;
-    edtNumero: TEdit;
     rctBairro: TRectangle;
     edtBairro: TEdit;
     rctUf: TRectangle;
-    edtUF: TEdit;
+    edtUf: TEdit;
     rctCidade: TRectangle;
     edtCidade: TEdit;
+    btnVoltar: TImage;
+    lytVoltar: TLayout;
     procedure btnLoginClick(Sender: TObject);
+    procedure lblCrieAgoraClick(Sender: TObject);
+    procedure lblLoginClick(Sender: TObject);
+    procedure btnProximoClick(Sender: TObject);
+    procedure lblConta2Click(Sender: TObject);
+    procedure btnCriarContaClick(Sender: TObject);
   private
     procedure ThreadLoginTerminate(Sender: TObject);
     { Private declarations }
@@ -72,9 +77,32 @@ implementation
 uses
   DataModule.Usuario, UnitPrincipal;
 
+//voltar na tela de cadastro e login
+procedure TFrmLogin.btnProximoClick(Sender: TObject);
+begin
+  TabControl.GotoVisibleTab(2);
+end;
+
+procedure TFrmLogin.lblConta2Click(Sender: TObject);
+begin
+  TabControl.GotoVisibleTab(0);
+end;
+
+procedure TFrmLogin.lblCrieAgoraClick(Sender: TObject);
+begin
+  tabcontrol.GotoVisibleTab(1);
+end;
+
+procedure TFrmLogin.lblLoginClick(Sender: TObject);
+begin
+  TabControl.GotoVisibleTab(0);
+end;
+
+//thread
 procedure TFrmLogin.ThreadLoginTerminate(Sender: TObject);
 begin
   TLoading.Hide; //parar de exibir a bolinha executando
+
   if Sender is TThread then
   begin
     if Assigned(TThread(Sender).FatalException) then
@@ -86,11 +114,39 @@ begin
 
   //Abrir o form Principal...
   if NOT Assigned(FrmPrincipal) then
-    Application.CreateForm(TFrmPrincipal, FrmPrincipal);
+      Application.CreateForm(TFrmPrincipal, FrmPrincipal); //classe e variavel
 
-  FrmPrincipal.Show;
+  Application.MainForm := FrmPrincipal; //definir form principal
+  FrmPrincipal.Show; //abrir o form
+  FrmLogin.Close; // fechar o form login
 end;
 
+//criar conta
+procedure TFrmLogin.btnCriarContaClick(Sender: TObject);
+var
+  t : TThread;
+begin
+  TLoading.Show(FrmLogin, '');
+
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+    Sleep(1500); //teste do loading
+    DmUsuario.CriarConta(edtNome.Text, edtContaEmail.Text,
+                          edtContaSenha.Text, edtEndereco.Text,
+                          edtBairro.Text, edtCidade.Text, edtUf.Text, edtCep.Text);
+
+    //salvar dados no banco do aparelho
+    if DmUsuario.TabUsuario.RecordCount > 0 then
+    begin
+
+    end;
+
+  end);
+  t.OnTerminate := ThreadLoginTerminate; //rotina de erro
+  t.Start;
+end;
+
+//login
 procedure TFrmLogin.btnLoginClick(Sender: TObject);
 var
   t : TThread;
@@ -99,7 +155,15 @@ begin
 
   t := TThread.CreateAnonymousThread(procedure
   begin
+    Sleep(1500); //teste do loading
     DmUsuario.Login(edtEmail.Text, edtSenha.Text);
+
+    //salvar dados no banco do aparelho
+    if DmUsuario.TabUsuario.RecordCount > 0 then
+    begin
+
+    end;
+
   end);
 
   t.OnTerminate := ThreadLoginTerminate; //rotina de erro
