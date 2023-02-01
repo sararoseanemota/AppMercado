@@ -136,7 +136,7 @@ delete from mercado where  id_mercado = 4;
 select * from mercado;
 select * from categoria;
 
-update mercado set ind_entrega = 'N', ind_retira = 'N' where id_mercado = 1;
+update mercado set ind_entrega = 'S', ind_retira = 'N' where id_mercado = 1;
 
 
 insert into produto_categoria(descricao, ordem) values('Alimentos', 1);
@@ -153,6 +153,14 @@ values(1, 'Café Pilão Torrado e Moído', 'Café Pilão torrado e moído embala
 insert into produto(id_categoria, nome, descricao, unidade, preco, url_foto, id_mercado)
 values(1, 'Café 3 Corações Torrado e Moído', 'Café 3 Corações torrado e moído embalado a vacuo', '500g', 18.99,  
 'https://static.paodeacucar.com/img/uploads/1/2/656002x200x200.png', 1);
+
+insert into produto(id_categoria, nome, descricao, unidade, preco, url_foto, id_mercado)
+values(3, 'Papel Higienico', 'Papel Higienico Neve', '24', 20.99,  
+'', 1);
+
+insert into produto(id_categoria, nome, descricao, unidade, preco, url_foto, id_mercado)
+values(5, 'Caderno', 'Caderno Rosa', '1', 15.99,  
+'', 1);
 
 insert into produto(id_categoria, nome, descricao, unidade, preco, url_foto, id_mercado)
 values(2, 'Cerveja Heineken Lata', 'O processo de fermentação da Heineken, a exclusiva Levedura A é responsável pelo sabor característico e bem equilibrado, com notas frutadas sutis.', 
@@ -188,7 +196,6 @@ order by c.ordem;
 select p.*
 from produto p
 where p.id_mercado = 1
-and p.nome like '%Café%'
 and p.id_categoria = 1;
 
 

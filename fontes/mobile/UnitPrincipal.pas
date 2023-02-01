@@ -134,7 +134,7 @@ end;
 //array listar mercados
 procedure TFrmPrincipal.ListarMercados;
 begin
-  var
+var
   t : TThread;
 begin
   TLoading.Show(FrmPrincipal, '');
@@ -143,7 +143,7 @@ begin
   lvMercado.BeginUpdate;
 
   t := TThread.CreateAnonymousThread(procedure
-  var
+var
   i : integer;
   begin
     Sleep(1500); //teste do loading
@@ -154,7 +154,7 @@ begin
     begin
       for i := 0 to recordcount - 1 do
       begin
-        //thread paralela
+        //thread paralela para sicronizar
         TThread.Synchronize(TThread.CurrentThread, procedure
         begin
          AddMercadoLv(fieldbyname('id_mercado').asinteger,
@@ -163,7 +163,6 @@ begin
                    fieldbyname('vl_entrega').asfloat,
                    fieldbyname('vl_compra_min').asfloat);
         end);
-
         Next;
       end;
     end;
@@ -179,6 +178,7 @@ begin
   if NOT Assigned(FrmMercado) then
       Application.CreateForm(TFrmMercado, FrmMercado);
 
+  FrmMercado.id_mercado := AItem.Tag;
   FrmMercado.Show;
 
 end;
@@ -210,7 +210,7 @@ end;
 
 procedure TFrmPrincipal.rctMeusPedidosClick(Sender: TObject);
 begin
-  // ao clicar no menu Meus Pedidos
+// ao clicar no menu Meus Pedidos
   if NOT Assigned(FrmPedidos) then
     Application.CreateForm(TFrmPedidos, FrmPedidos);
   OpenMenu(false);   //fechando o menu
