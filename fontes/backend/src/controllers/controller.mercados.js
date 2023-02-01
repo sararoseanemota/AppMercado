@@ -25,8 +25,8 @@ controllerMercados.get("/mercados", function(request, response){
     ssql = ssql + " where id_mercado > 0"
 
     if (request.query.busca){
-        ssql = ssql + " and nome =? "
-        filtro.push(request.query.busca) //acessando e inserindo os dados na array filtro
+        ssql = ssql + " and nome like ? "
+        filtro.push('%'+ request.query.busca + '%') //acessando e inserindo os dados na array filtro
     }
 
     if (request.query.ind_entrega){

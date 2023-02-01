@@ -14,13 +14,16 @@ uses
   UnitPedido in 'UnitPedido.pas' {FrmPedidos},
   UnitPedidoDetalhe in 'UnitPedidoDetalhe.pas' {FrmPedidoDetalhe},
   DataModule.Usuario in 'dataModule\DataModule.Usuario.pas' {DmUsuario: TDataModule},
-  uLoading in 'Units\uLoading.pas';
+  uLoading in 'Units\uLoading.pas',
+  DataModule.Mercado in 'dataModule\DataModule.Mercado.pas' {DmMercado: TDataModule};
 
 {$R *.res}
 
 begin
   Application.Initialize;
+  Application.CreateForm(TFrmPrincipal, FrmPrincipal);
   Application.CreateForm(TDmUsuario, DmUsuario);
   Application.CreateForm(TFrmLogin, FrmLogin);
+  Application.CreateForm(TDmMercado, DmMercado);
   Application.Run;
 end.

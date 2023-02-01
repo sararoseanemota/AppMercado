@@ -7,7 +7,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.Layouts, FMX.Controls.Presentation, FMX.StdCtrls, FMX.Edit,
   FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base,
-  FMX.ListView, FMX.Ani;
+  FMX.ListView, FMX.Ani, uLoading;
 
 type
   TFrmPrincipal = class(TForm)
@@ -50,16 +50,23 @@ type
     procedure imgMenuClick(Sender: TObject);
     procedure imgVoltarMenuClick(Sender: TObject);
     procedure rctMeusPedidosClick(Sender: TObject);
+    procedure btnBuscarClick(Sender: TObject);
 
   private
+     { Private declarations }
+    FInd_Retira: string;
+    FInd_Entrega: string;
     procedure AddMercadoLv(id_mercado: integer; nome, endereco: string;
       tx_entrega, vl_min_ped: double);
     procedure ListarMercados;
     procedure SelecionarEntrega(lbl: Tlabel);
     procedure OpenMenu(ind: Boolean);
-    { Private declarations }
+    procedure ThreadMercadosTerminate(Sender: TObject);
+
   public
     { Public declarations }
+    property Ind_Entrega : string read FInd_Entrega write FInd_Entrega;
+    property Ind_Retira : string read FInd_Retira write FInd_Retira;
   end;
 
 var
@@ -69,12 +76,11 @@ implementation
 
 {$R *.fmx}
 
-uses UnitMercado, UnitCarrinho, UnitPedido;
+uses UnitMercado, UnitCarrinho, UnitPedido, DataModule.Mercado, UnitLogin,
+  DataModule.Usuario;
 
 //list view
-procedure TFrmPrincipal.AddMercadoLv(id_mercado : integer;
-                                      nome, endereco : string;
-                                      tx_entrega, vl_min_ped: double);
+procedure TFrmPrincipal.AddMercadoLv(id_mercado : integer; nome, endereco : string; tx_entrega, vl_min_ped: double);
 var
   img : TListItemImage;
   txt : TListItemText;
@@ -110,18 +116,65 @@ begin
 
 end;
 
-
-//array
-procedure TFrmPrincipal.ListarMercados;
+//thread
+procedure TFrmPrincipal.ThreadMercadosTerminate(Sender: TObject);
 begin
-  AddMercadoLv(1, 'Pão de Açúcar', 'CNB 7, lote 02, lojas 01-10', 10, 50);
-  AddMercadoLv(1, 'Pão de Açúcar', 'CNB 7, lote 02, lojas 01-10', 10, 50);
-  AddMercadoLv(1, 'Pão de Açúcar', 'CNB 7, lote 02, lojas 01-10', 10, 50);
-  AddMercadoLv(1, 'Pão de Açúcar', 'CNB 7, lote 02, lojas 01-10', 10, 50);
+  TLoading.Hide; //parar de exibir a bolinha executando
+  lvMercado.EndUpdate;
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+        ShowMessage(Exception(TThread(sender).FatalException).Message);
+        Exit;
+    end;
+  end;
 end;
 
-procedure TFrmPrincipal.lvMercadoItemClick(const Sender: TObject;
-  const AItem: TListViewItem);
+//array listar mercados
+procedure TFrmPrincipal.ListarMercados;
+begin
+  var
+  t : TThread;
+begin
+  TLoading.Show(FrmPrincipal, '');
+  //inserir na lista
+  lvMercado.Items.Clear;
+  lvMercado.BeginUpdate;
+
+  t := TThread.CreateAnonymousThread(procedure
+  var
+  i : integer;
+  begin
+    Sleep(1500); //teste do loading
+    DmMercado.ListarMercado(edtPesquisa.Text, Ind_Entrega, Ind_Retira);
+
+    //
+    with DmMercado.TabMercado do
+    begin
+      for i := 0 to recordcount - 1 do
+      begin
+        //thread paralela
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         AddMercadoLv(fieldbyname('id_mercado').asinteger,
+                   fieldbyname('nome').asstring,
+                   fieldbyname('endereco').asstring,
+                   fieldbyname('vl_entrega').asfloat,
+                   fieldbyname('vl_compra_min').asfloat);
+        end);
+
+        Next;
+      end;
+    end;
+  end);
+
+  t.OnTerminate := ThreadMercadosTerminate; //rotina de erro
+  t.Start;
+end;
+end;
+
+procedure TFrmPrincipal.lvMercadoItemClick(const Sender: TObject; const AItem: TListViewItem);
 begin
   if NOT Assigned(FrmMercado) then
       Application.CreateForm(TFrmMercado, FrmMercado);
@@ -130,9 +183,15 @@ begin
 
 end;
 
-procedure TFrmPrincipal.FormShow(Sender: TObject);
+//show
+procedure TFrmPrincipal.btnBuscarClick(Sender: TObject);
 begin
   ListarMercados;
+end;
+
+procedure TFrmPrincipal.FormShow(Sender: TObject);
+begin
+  SelecionarEntrega(lblCasa);
 end;
 
 //clicando na imagem carrinho e carregando o form Carrinho
@@ -168,12 +227,22 @@ begin
   OpenMenu(false);
 end;
 
+//selecionar a entrega
 procedure TFrmPrincipal.SelecionarEntrega(lbl : Tlabel);
 begin
   lblCasa.FontColor := $FF747474;
   lblRetira.FontColor := $FF747474;
 
   lbl.FontColor := $FFFFFFFF;
+  Ind_Entrega :='';
+  Ind_Retira := '';
+
+  if lbl.Tag = 0 then
+    ind_entrega := 'S'
+  else
+    ind_retira := 'S';
+
+  ListarMercados;
 
   AnimationFiltro.StopValue := lbl.Position.X; //posicao final da animação
   AnimationFiltro.Start;

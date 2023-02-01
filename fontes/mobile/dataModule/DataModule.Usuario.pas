@@ -97,7 +97,7 @@ begin
             .Post;
     if (resp.StatusCode = 401) then
         raise Exception.Create('Usuário não autorizado')
-    else if (resp.StatusCode <> 200) then
+    else if (resp.StatusCode <> 201) then
         raise Exception.Create(resp.Content);
   finally
     json.DisposeOf; //destruindo o objeto json

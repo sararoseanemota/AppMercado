@@ -14,6 +14,9 @@ default character set utf8
 default collate utf8_general_ci;
 
 update mercado set nome = 'Pão' where id_mercado = 1;
+update mercado set ind_retira ='N' where id_mercado =2;
+
+select * from mercado;
 
 
 /*-------------------------------------------------------------*/
@@ -123,6 +126,13 @@ values('Pão de Açúcar', 'Av. Interlagos, 850', 'Interlagos', 'São Paulo', 'S
 insert into mercado(nome, endereco, bairro, cidade, uf, cep, dt_cadastro, vl_entrega, vl_compra_min, ind_entrega, ind_retira)
 values('DiaAdia', 'Av. Paulista, 10', 'Zona Leste', 'São Paulo', 'SP', '05310-020', current_timestamp(), 15.99, 100, 'S', 'S');
 
+insert into mercado(nome, endereco, bairro, cidade, uf, cep, dt_cadastro, vl_entrega, vl_compra_min, ind_entrega, ind_retira)
+values('Ultrabox', 'QNN 30, AE 02 Lote 02/10', 'Sul', 'Brasília', 'DF', '05310-020', current_timestamp(), 20.00, 150, 'S', 'S');
+
+insert into mercado(nome, endereco, bairro, cidade, uf, cep, dt_cadastro, vl_entrega, vl_compra_min, ind_entrega, ind_retira)
+values('Fort Atacadista', 'QNN 02, AE 02 Lote 14/30', 'Centro', 'Brasília', 'DF', '05380-020', current_timestamp(), 20.00, 100, 'S', 'N');
+
+delete from mercado where  id_mercado = 4;
 select * from mercado;
 select * from categoria;
 
