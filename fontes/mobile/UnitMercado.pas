@@ -39,14 +39,15 @@ type
       const Item: TListBoxItem);
   private
     FId_Mercado: Integer;
-    procedure AddProduto(id_produto: integer; descricao, unidade: string;
-      valor: double);
-    procedure ListarProdutos;
+    procedure AddProduto(id_produto: integer; descricao, unidade, url_foto: string; valor : double);
+    procedure ListarProdutos(id_categoria : Integer);
     procedure ListarCategorias;
     procedure AddCategoria(id_categoria: integer; descricao: string);
     procedure SelecionarCategoria(item: TListBoxItem);
     procedure CarregarDados;
     procedure ThreadDadosTerminate(Sender: TObject);
+    procedure ThreadProdutosTerminate(Sender: TObject);
+    procedure DownloadFoto(lb : TListBox; objeto_imagem : string);
     { Private declarations }
   public
     { Public declarations }
@@ -61,8 +62,37 @@ implementation
 {$R *.fmx}
 
 uses UnitPrincipal, Frame.ProdutoCard, UnitProduto, DataModule.Mercado;
+
+//baixar imagens
+procedure TFrmMercado.DownloadFoto(lb : TListBox; objeto_imagem : string);
+var
+  t: TThread;
+  foto : Tbitmap;
+begin
+  //carregar imagens
+  t := TThread.CreateAnonymousThread(procedure
+  var
+  i : Integer;
+  begin
+
+    for i := 0 to lb.Items.Count - 1 do
+    begin
+      if TListItemImage(lv.Items[i].objects.findObject(objeto_imagem)).TagString <> '' then
+      begin
+        foto := TBitmap.Create;
+        LoadImageFromURL(foto,TListItemImage(lb.Items[i].Objects.FindObject(objeto_imagem)).TagString;
+
+        TListImage(lb.Items[i].Objects.FindObject(objeto_imagem)).OwnsBitmap := True;
+        TListImage(lb.Items[i].Objects.FindObject(objeto_imagem)).OwnsBitmap := foto;
+      end;
+    end;
+      
+  end);
+
+end;
+
 //adicionar produtos
-procedure TFrmMercado.AddProduto(id_produto: integer; descricao, unidade: string; valor : double);
+procedure TFrmMercado.AddProduto(id_produto: integer; descricao, unidade, url_foto: string; valor : double);
 var
   item : TListBoxItem;
   frame : TFrameProdutoCard;
@@ -75,10 +105,11 @@ begin
 
   //frame
   frame := TframeProdutoCard.Create(item);
-  //frame.imgFoto.bitmap :=
+  frame.imgFoto.Tag := url_foto;
   frame.lblDescricao.text := descricao;
   frame.lblValor.text := FormatFloat('R$#,##0.00', valor);
   frame.lblUnidade.text := unidade;
+  
 
   item.AddObject(frame);
 
@@ -86,51 +117,70 @@ begin
   lbProdutos.AddObject(item);
 end;
 
-//consultar os produtos no banco
-procedure TFrmMercado.ListarProdutos;
+//selecionar produtos
+procedure TFrmMercado.lbProdutosItemClick(const Sender: TCustomListBox;const Item: TListBoxItem);
 begin
-  AddProduto(0, 'Melancia', 'Preço por Kg, unidade', 3);
-  AddProduto(0, 'Melancia', 'Preço por Kg, unidade', 3);
-  AddProduto(0, 'Melancia', 'Preço por Kg, unidade', 3);
-  AddProduto(0, 'Melancia', 'Preço por Kg, unidade', 3);
-  AddProduto(0, 'Melancia', 'Preço por Kg, unidade', 3);
-  AddProduto(0, 'Melancia', 'Preço por Kg, unidade', 3);
+   if NOT Assigned(FrmProduto) then
+    Application.CreateForm(TFrmProduto, FrmProduto);
 
+    FrmProduto.Show;
 end;
 
-//selecionar categoria
-procedure TFrmMercado.SelecionarCategoria(item : TListBoxItem);
+//listar os produtos
+procedure TFrmMercado.ListarProdutos (id_categoria : Integer);
 var
-  x: integer;
-  item_loop : TListBoxItem;
-  rect : TRectangle;
-  lbl : TLabel;
+  t : TThread;
 begin
-  //zerar os itens
-  for x := 0 to lbCategoria.Items.Count - 1 do
+  lbProdutos.Items.Clear; //limpar os produtos
+  TLoading.Show(FrmMercado, '');
+  t := TThread.CreateAnonymousThread(procedure
   begin
-    item_loop := lbCategoria.ItemByIndex(x);
+    Sleep(1500);
+    DmMercado.ListarProduto(Id_mercado, id_categoria);
 
-    rect := TRectangle(item_loop.Components[0]);
-    rect.Fill.Color :=  $FFDADADA;
+    with DmMercado.TabProduto do
+    begin
+      while NOT Eof do
+      begin
+        //thread paralela para sicronizar
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         //adicionando os produtos
 
-    lbl := TLabel(rect.Components[0]);
-    lbl.FontColor := $FF565656;
+            //AddProduto(0, 'Melancia', 'Preço por Kg, unidade', 3);
+            AddProduto(fieldbyname('id_produto').asinteger,
+                          fieldbyname('nome').asstring,
+                          fieldbyname('unidade').asstring,
+                          fieldbyname('preco').asfloat);
+        end);
+
+        Next;
+      end;
+    end;
+  end);
+
+  t.OnTerminate := ThreadProdutosTerminate;
+  t.Start;
+ end;
+
+//thread terminate produtos
+procedure TFrmMercado.ThreadProdutosTerminate(Sender: TObject);
+begin
+  TLoading.Hide; //parar de exibir a bolinha executando
+  //lvMercado.EndUpdate;
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+        ShowMessage(Exception(TThread(sender).FatalException).Message);
+        Exit;
+    end;
   end;
-
-  //ajustar somente item selecionado
-  rect := TRectangle(item.Components[0]);
-  rect.Fill.Color :=  $FF76B947;
-
-  lbl := TLabel(rect.Components[0]);
-  lbl.FontColor := $FFFFFFFF;
-
-  //Salvar a categoria selecionada
-  lbCategoria.tag := item.Tag;
 end;
 
 //adicionar categoria
 procedure TFrmMercado.AddCategoria(id_categoria : integer; descricao : string);
+
 var
   item : TListBoxItem;
   rect : TRectangle;
@@ -173,7 +223,46 @@ begin
   lbCategoria.AddObject(item); //adicionando a categoria na lista
 end;
 
-//listar Categorias
+//selecionar categoria
+procedure TFrmMercado.SelecionarCategoria(item : TListBoxItem);
+var
+  x: integer;
+  item_loop : TListBoxItem;
+  rect : TRectangle;
+  lbl : TLabel;
+begin
+  //zerar os itens
+  for x := 0 to lbCategoria.Items.Count - 1 do
+  begin
+    item_loop := lbCategoria.ItemByIndex(x);
+
+    rect := TRectangle(item_loop.Components[0]);
+    rect.Fill.Color :=  $FFDADADA;
+
+    lbl := TLabel(rect.Components[0]);
+    lbl.FontColor := $FF565656;
+  end;
+
+  //ajustar somente item selecionado
+  rect := TRectangle(item.Components[0]);
+  rect.Fill.Color :=  $FF76B947;
+
+  lbl := TLabel(rect.Components[0]);
+  lbl.FontColor := $FFFFFFFF;
+
+  //Salvar a categoria selecionada
+  lbCategoria.tag := item.Tag;
+end;
+
+//selecionar item categoria na list box
+procedure TFrmMercado.lbCategoriaItemClick(const Sender: TCustomListBox;const Item: TListBoxItem);
+begin
+  SelecionarCategoria(Item);
+  ListarProdutos(lbCategoria.Tag);
+
+end;
+
+//listar as categorias
 procedure TFrmMercado.ListarCategorias;
 begin
    DmMercado.ListarCategoria(Id_mercado);
@@ -194,25 +283,13 @@ begin
       end;
     end;
 
-  //carregar listagem dos produtos
-  //ListarProdutos;
-end;
-
-//thread
-procedure TFrmMercado.ThreadDadosTerminate(Sender: TObject);
-begin
-  lblTitulo.Opacity :=  1;
-  lytEndereco.Opacity := 1;
-  TLoading.Hide; //parar de exibir a bolinha executando
-  //lvMercado.EndUpdate;
-  if Sender is TThread then
-  begin
-    if Assigned(TThread(Sender).FatalException) then
-    begin
-        ShowMessage(Exception(TThread(sender).FatalException).Message);
-        Exit;
-    end;
-  end;
+    if lbCategoria.Items.Count > 0 then
+    //thread paralela para sicronizar
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+          //selecionar primeiro item
+          SelecionarCategoria(lbCategoria.ItemByIndex(0));
+        end);
 end;
 
 //carregar dados
@@ -222,7 +299,8 @@ var
   t : TThread;
 begin
   TLoading.Show(FrmMercado, '');
-  lbCategoria.Items.clear; //limpando os itens
+  lbCategoria.Items.clear; //limpando as categorias
+  lbProdutos.Items.Clear; //limpando os produtos
   lblTitulo.Opacity := 0;
   lytEndereco.Opacity :=0;
 
@@ -250,6 +328,7 @@ begin
 
     // listar as categorias
     ListarCategorias;
+
   end);
 
   t.OnTerminate := ThreadDadosTerminate; //rotina de erro
@@ -257,25 +336,30 @@ begin
 end;
 end;
 
+//thread terminate dados
+procedure TFrmMercado.ThreadDadosTerminate(Sender: TObject);
+begin
+  lblTitulo.Opacity :=  1;
+  lytEndereco.Opacity := 1;
+  TLoading.Hide; //parar de exibir a bolinha executando
+
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+        ShowMessage(Exception(TThread(sender).FatalException).Message);
+        Exit;
+    end;
+  end;
+
+   //carregar listagem dos produtos após a categoria selecionada
+  ListarProdutos(lbCategoria.Tag);
+end;
+
 //show
 procedure TFrmMercado.FormShow(Sender: TObject);
 begin
   CarregarDados;  //Dados: Mercado, categorias, produtos...
-end;
-
-procedure TFrmMercado.lbCategoriaItemClick(const Sender: TCustomListBox;
-  const Item: TListBoxItem);
-begin
-  SelecionarCategoria(Item);
-end;
-
-procedure TFrmMercado.lbProdutosItemClick(const Sender: TCustomListBox;
-  const Item: TListBoxItem);
-begin
-   if NOT Assigned(FrmProduto) then
-    Application.CreateForm(TFrmProduto, FrmProduto);
-
-    FrmProduto.Show;
 end;
 
 end.
