@@ -1,0 +1,124 @@
+unit UnitProduto;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts,
+  System.Net.HttpClientComponent, System.Net.HttpClient;
+
+type
+  TFrmProduto = class(TForm)
+    lytToolBar: TLayout;
+    lblTitulo: TLabel;
+    imgVoltar: TImage;
+    lytFoto: TLayout;
+    imgFoto: TImage;
+    lblDescricao: TLabel;
+    lblInformacao: TLabel;
+    lblPreco: TLabel;
+    lytPreco: TLayout;
+    lblValor: TLabel;
+    lytPrecoUnd: TLayout;
+    lblPrecoUnd: TLabel;
+    lblValorUnd: TLabel;
+    rctBottom: TRectangle;
+    lytAdicionar: TLayout;
+    imgMenos: TImage;
+    imgMais: TImage;
+    lblQtd: TLabel;
+    btnAdicionar: TButton;
+    lytFundo: TLayout;
+    procedure FormResize(Sender: TObject);
+  private
+    FId_produto: Integer;
+    procedure LoadImageFromURL(img: TBitmap; url: string);
+    { Private declarations }
+  public
+    { Public declarations }
+  property Id_produto : Integer read FId_produto write FId_produto;
+  end;
+
+var
+  FrmProduto: TFrmProduto;
+
+implementation
+
+{$R *.fmx}
+
+uses UnitPrincipal;
+
+//dowloand pela URL
+procedure TFrmProduto.LoadImageFromURL (img: TBitmap; url : string);
+var
+  http: TNetHttpClient;
+  vStream : TMemoryStream;
+begin
+  try
+    try
+      http := TNetHTTPClient.Create(nil);
+      vStream := TMemoryStream.Create;
+
+      if (Pos('https', LowerCase(url)) > 0) then
+        HTTP.SecureProtocols := [THTTPSecureProtocol.TLS1,
+                                 THTTPSecureProtocol.TLS11,
+                                 THTTPSecureProtocol.TLS12];
+     http.Get(url, vStream);
+     vStream.Position :=0;
+
+     img.LoadFromStream(vStream);
+
+    except
+    end;
+
+  finally
+    vStream.DisposeOf;
+    http.DisposeOf;
+  end;
+end;
+
+////baixar imagens
+//procedure TFrmMercado.DownloadFoto(lb: TListBox);
+//var
+//    t: TThread;
+//    foto : Tbitmap;
+//    frame : TFrameProdutoCard;
+//begin
+//  //carregar imagens
+//  t := TThread.CreateAnonymousThread(procedure
+//  var
+//  i : Integer;
+//  begin
+//    for i := 0 to lb.Items.Count - 1 do
+//    begin
+////      Sleep(1000);
+//      frame := TFrameProdutoCard(lb.ItemByIndex(i).Components[0]); //metodo para procurar pelo index o objeto
+//
+//      if frame.imgFoto.TagString <>  '' then
+//      begin
+//        foto := TBitmap.Create;
+//        LoadImageFromURL(foto, frame.imgFoto.TagString);
+//
+//        frame.imgFoto.TagString := ''; //limpar
+//        frame.imgFoto.Bitmap := foto;
+//      end;
+//    end;
+//  end);
+//
+//  t.Start; //iniciar a thread
+//end;
+
+procedure TFrmProduto.FormResize(Sender: TObject);
+begin
+  if (FrmProduto.Width > 600) and (FrmProduto.Height > 600) then
+  begin
+      lytFundo.Align := TAlignLayout.Center;
+      lytFundo.Height := 350;
+  end
+  else
+      lytFundo.Align := TAlignLayout.Client;
+end;
+
+
+end.

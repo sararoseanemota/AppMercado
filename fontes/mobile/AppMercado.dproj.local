@@ -3,7 +3,8 @@
 	<Transactions>
     <Transaction>2023/02/01 13:59:20.000.167,=D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Unit2.pas</Transaction>
     <Transaction>2023/02/01 13:59:38.000.125,D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Unit2.pas=D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Units\uConsts.pas</Transaction>
-  </Transactions>  <ProjectSortOrder AutoSort="0" SortType="0">
+  </Transactions>
+	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="android-support-v4.dex.jar"/>
     <File Path="cloud-messaging.dex.jar"/>
     <File Path="com-google-android-gms.play-services-ads-base.17.2.0.dex.jar"/>

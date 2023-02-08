@@ -13,15 +13,18 @@ type
     TabMercado: TFDMemTable;
     TabCategoria: TFDMemTable;
     TabProduto: TFDMemTable;
+    TabProdDetalhe: TFDMemTable;
     procedure DataModuleCreate(Sender: TObject);
   private
+
       { Private declarations }
   public
     { Public declarations }
     procedure ListarMercado(busca, ind_entrega, ind_retira: string);
     procedure ListarMercadoId(id_mercado: integer);
     procedure ListarCategoria(id_mercado: integer);
-    procedure ListarProduto(id_mercado, id_categoria: integer);
+    procedure ListarProduto(id_mercado, id_categoria : integer; busca : string);
+    procedure ListarProdutoId(id_produto: integer);
   end;
 
 var
@@ -95,7 +98,7 @@ begin
 end;
 
 //listar produtos
-procedure TDmMercado.ListarProduto(id_mercado, id_categoria : integer);
+procedure TDmMercado.ListarProduto(id_mercado, id_categoria : integer; busca : string);
 var
   resp: IResponse;
 begin
@@ -104,7 +107,26 @@ begin
             .Resource('mercados')
             .ResourceSuffix(id_mercado.ToString + '/produtos')
             .AddParam('id_categoria', id_categoria.ToString)
+            .AddParam('busca', busca)
             .DataSetAdapter(TabProduto)
+            .Accept('application/json')
+            .BasicAuthentication(USER_NAME, PASSWORD)
+            .Get;
+
+    if (resp.StatusCode <> 200) then
+        raise Exception.Create(resp.Content);
+end;
+
+//listar produtos id
+procedure TDmMercado.ListarProdutoId(id_produto : integer);
+var
+  resp: IResponse;
+begin
+    //resposta
+    resp := TRequest.New.BaseURL(BASE_URL)
+            .Resource('produtos')
+            .ResourceSuffix(id_produto.ToString)
+            .DataSetAdapter(TabProdDetalhe)
             .Accept('application/json')
             .BasicAuthentication(USER_NAME, PASSWORD)
             .Get;

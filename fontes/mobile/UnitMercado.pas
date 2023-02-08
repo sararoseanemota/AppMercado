@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
-  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Edit, FMX.ListBox, uLoading;
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Edit, FMX.ListBox,
+  uLoading, System.Net.HttpClientComponent, System.Net.HttpClient;
 
 type
   TFrmMercado = class(TForm)
@@ -37,17 +38,20 @@ type
       const Item: TListBoxItem);
     procedure lbProdutosItemClick(const Sender: TCustomListBox;
       const Item: TListBoxItem);
+    procedure btnBuscarClick(Sender: TObject);
+    procedure imgVoltarClick(Sender: TObject);
   private
     FId_Mercado: Integer;
     procedure AddProduto(id_produto: integer; descricao, unidade, url_foto: string; valor : double);
-    procedure ListarProdutos(id_categoria : Integer);
+    procedure ListarProdutos(id_categoria : Integer; busca : string);
     procedure ListarCategorias;
     procedure AddCategoria(id_categoria: integer; descricao: string);
     procedure SelecionarCategoria(item: TListBoxItem);
     procedure CarregarDados;
     procedure ThreadDadosTerminate(Sender: TObject);
     procedure ThreadProdutosTerminate(Sender: TObject);
-    procedure DownloadFoto(lb : TListBox; objeto_imagem : string);
+    procedure DownloadFoto(lb : TListBox);
+    procedure LoadImageFromURL(img: TBitmap; url: string);
     { Private declarations }
   public
     { Public declarations }
@@ -63,32 +67,64 @@ implementation
 
 uses UnitPrincipal, Frame.ProdutoCard, UnitProduto, DataModule.Mercado;
 
-//baixar imagens
-procedure TFrmMercado.DownloadFoto(lb : TListBox; objeto_imagem : string);
+//dowloand pela URL
+procedure TFrmMercado.LoadImageFromURL (img: TBitmap; url : string);
 var
-  t: TThread;
-  foto : Tbitmap;
+  http: TNetHttpClient;
+  vStream : TMemoryStream;
+begin
+  try
+    try
+      http := TNetHTTPClient.Create(nil);
+      vStream := TMemoryStream.Create;
+
+      if (Pos('https', LowerCase(url)) > 0) then
+        HTTP.SecureProtocols := [THTTPSecureProtocol.TLS1,
+                                 THTTPSecureProtocol.TLS11,
+                                 THTTPSecureProtocol.TLS12];
+     http.Get(url, vStream);
+     vStream.Position :=0;
+
+     img.LoadFromStream(vStream);
+
+    except
+    end;
+
+  finally
+    vStream.DisposeOf;
+    http.DisposeOf;
+  end;
+end;
+
+//baixar imagens
+procedure TFrmMercado.DownloadFoto(lb: TListBox);
+var
+    t: TThread;
+    foto : Tbitmap;
+    frame : TFrameProdutoCard;
 begin
   //carregar imagens
   t := TThread.CreateAnonymousThread(procedure
   var
   i : Integer;
   begin
-
     for i := 0 to lb.Items.Count - 1 do
     begin
-      if TListItemImage(lv.Items[i].objects.findObject(objeto_imagem)).TagString <> '' then
+//      Sleep(1000);
+      frame := TFrameProdutoCard(lb.ItemByIndex(i).Components[0]); //metodo para procurar pelo index o objeto
+
+      if frame.imgFoto.TagString <>  '' then
       begin
         foto := TBitmap.Create;
-        LoadImageFromURL(foto,TListItemImage(lb.Items[i].Objects.FindObject(objeto_imagem)).TagString;
+        LoadImageFromURL(foto, frame.imgFoto.TagString);
 
-        TListImage(lb.Items[i].Objects.FindObject(objeto_imagem)).OwnsBitmap := True;
-        TListImage(lb.Items[i].Objects.FindObject(objeto_imagem)).OwnsBitmap := foto;
+        frame.imgFoto.TagString := ''; //limpar
+        frame.imgFoto.Bitmap := foto;
       end;
     end;
-      
   end);
 
+  t.Start; //iniciar a thread
 end;
 
 //adicionar produtos
@@ -105,16 +141,21 @@ begin
 
   //frame
   frame := TframeProdutoCard.Create(item);
-  frame.imgFoto.Tag := url_foto;
   frame.lblDescricao.text := descricao;
   frame.lblValor.text := FormatFloat('R$#,##0.00', valor);
   frame.lblUnidade.text := unidade;
-  
+  frame.imgFoto.TagString:= url_foto;
 
   item.AddObject(frame);
 
   //adicionando itens na lista de produtos
   lbProdutos.AddObject(item);
+end;
+
+//buscar produtos
+procedure TFrmMercado.btnBuscarClick(Sender: TObject);
+begin
+  ListarProdutos(lbCategoria.Tag, edtPesquisa.Text);
 end;
 
 //selecionar produtos
@@ -123,11 +164,12 @@ begin
    if NOT Assigned(FrmProduto) then
     Application.CreateForm(TFrmProduto, FrmProduto);
 
+    FrmProduto.Id_produto := Item.tag;
     FrmProduto.Show;
 end;
 
 //listar os produtos
-procedure TFrmMercado.ListarProdutos (id_categoria : Integer);
+procedure TFrmMercado.ListarProdutos (id_categoria : Integer; busca : string);
 var
   t : TThread;
 begin
@@ -135,8 +177,8 @@ begin
   TLoading.Show(FrmMercado, '');
   t := TThread.CreateAnonymousThread(procedure
   begin
-    Sleep(1500);
-    DmMercado.ListarProduto(Id_mercado, id_categoria);
+//    Sleep(1500);
+    DmMercado.ListarProduto(Id_mercado, id_categoria, busca);
 
     with DmMercado.TabProduto do
     begin
@@ -151,9 +193,9 @@ begin
             AddProduto(fieldbyname('id_produto').asinteger,
                           fieldbyname('nome').asstring,
                           fieldbyname('unidade').asstring,
+                          FieldByName('url_foto').AsString,
                           fieldbyname('preco').asfloat);
         end);
-
         Next;
       end;
     end;
@@ -176,6 +218,8 @@ begin
         Exit;
     end;
   end;
+
+  DownloadFoto(lbProdutos);
 end;
 
 //adicionar categoria
@@ -258,7 +302,7 @@ end;
 procedure TFrmMercado.lbCategoriaItemClick(const Sender: TCustomListBox;const Item: TListBoxItem);
 begin
   SelecionarCategoria(Item);
-  ListarProdutos(lbCategoria.Tag);
+  ListarProdutos(lbCategoria.Tag, edtPesquisa.Text);
 
 end;
 
@@ -308,7 +352,7 @@ begin
   var
     i : integer;
   begin
-    Sleep(3000); //teste do loading
+//    Sleep(3000); //teste do loading
 
     //listando os dados do mercado
     DmMercado.ListarMercadoId(Id_mercado);
@@ -353,13 +397,19 @@ begin
   end;
 
    //carregar listagem dos produtos após a categoria selecionada
-  ListarProdutos(lbCategoria.Tag);
+  ListarProdutos(lbCategoria.Tag, edtPesquisa.Text);
 end;
 
 //show
 procedure TFrmMercado.FormShow(Sender: TObject);
 begin
   CarregarDados;  //Dados: Mercado, categorias, produtos...
+end;
+
+//finalizar tela
+procedure TFrmMercado.imgVoltarClick(Sender: TObject);
+begin
+ Close;
 end;
 
 end.

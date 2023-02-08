@@ -11,8 +11,8 @@ object DmMercado: TDmMercado
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 48
-    Top = 40
+    Left = 24
+    Top = 24
   end
   object TabCategoria: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
@@ -22,8 +22,8 @@ object DmMercado: TDmMercado
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 152
-    Top = 40
+    Left = 112
+    Top = 24
   end
   object TabProduto: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
@@ -33,7 +33,18 @@ object DmMercado: TDmMercado
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 232
-    Top = 40
+    Left = 184
+    Top = 24
+  end
+  object TabProdDetalhe: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 280
+    Top = 24
   end
 end
