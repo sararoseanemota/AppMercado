@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Edit, FMX.ListBox,
-  uLoading, System.Net.HttpClientComponent, System.Net.HttpClient;
+  uLoading, System.Net.HttpClientComponent, System.Net.HttpClient, uFunctions;
 
 type
   TFrmMercado = class(TForm)
@@ -51,7 +51,6 @@ type
     procedure ThreadDadosTerminate(Sender: TObject);
     procedure ThreadProdutosTerminate(Sender: TObject);
     procedure DownloadFoto(lb : TListBox);
-    procedure LoadImageFromURL(img: TBitmap; url: string);
     { Private declarations }
   public
     { Public declarations }
@@ -67,34 +66,7 @@ implementation
 
 uses UnitPrincipal, Frame.ProdutoCard, UnitProduto, DataModule.Mercado;
 
-//dowloand pela URL
-procedure TFrmMercado.LoadImageFromURL (img: TBitmap; url : string);
-var
-  http: TNetHttpClient;
-  vStream : TMemoryStream;
-begin
-  try
-    try
-      http := TNetHTTPClient.Create(nil);
-      vStream := TMemoryStream.Create;
 
-      if (Pos('https', LowerCase(url)) > 0) then
-        HTTP.SecureProtocols := [THTTPSecureProtocol.TLS1,
-                                 THTTPSecureProtocol.TLS11,
-                                 THTTPSecureProtocol.TLS12];
-     http.Get(url, vStream);
-     vStream.Position :=0;
-
-     img.LoadFromStream(vStream);
-
-    except
-    end;
-
-  finally
-    vStream.DisposeOf;
-    http.DisposeOf;
-  end;
-end;
 
 //baixar imagens
 procedure TFrmMercado.DownloadFoto(lb: TListBox);

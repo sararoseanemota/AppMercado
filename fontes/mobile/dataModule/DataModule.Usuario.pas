@@ -6,34 +6,41 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  DataSet.Serialize.Config, RESTRequest4D, System.JSON, uConsts;
+  DataSet.Serialize.Config, RESTRequest4D, System.JSON, uConsts,
+  FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.FMXUI.Wait, System.IOUtils, FireDAC.DApt,
+  FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteWrapper.Stat,
+  FireDAC.Phys.SQLiteDef, FireDAC.Phys.SQLite;
 
 type
   TDmUsuario = class(TDataModule)
     TabUsuario: TFDMemTable;
+    conn: TFDConnection;
+    QryGeral: TFDQuery;
+    FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink;
     procedure DataModuleCreate(Sender: TObject);
+    procedure connBeforeConnect(Sender: TObject);
+    procedure connAfterConnect(Sender: TObject);
   private
   
   public
     procedure Login(email, senha: string);
     procedure CriarConta(nome, email, senha, endereco, bairro, cidade, uf,
       cep: string);
-
   end;
 
 var
   DmUsuario: TDmUsuario;
 
 implementation
-
 {%CLASSGROUP 'FMX.Controls.TControl'}
-
 {$R *.dfm}
 
 procedure TDmUsuario.DataModuleCreate(Sender: TObject);
 begin
   //TDataSetSerializeConfig.GetInstance.CaseNameDefinition := TCaseNameDefinition.cndLowerCamelCase;
   TDataSetSerializeConfig.GetInstance.CaseNameDefinition := cndLower;
+  conn.Connected := true;
 end;
 
 // login
@@ -63,6 +70,42 @@ begin
     json.DisposeOf; //destruindo o objeto json
   end;
 
+end;
+
+//depois de conectar criar tabelas
+procedure TDmUsuario.connAfterConnect(Sender: TObject);
+begin
+  conn.ExecSQL('CREATE TABLE IF NOT EXISTS TAB_USUARIO(EMAIL VARCHAR (100), '+
+               'NOME VARCHAR(100), '+
+               'ENDERECO VARCHAR(100), '+
+               'BAIRRO VARCHAR(100), '+
+               'CIDADE VARCHAR(100), '+
+               'UF VARCHAR(100), '+
+               'CEP VARCHAR(100))');
+
+  conn.ExecSQL('CREATE TABLE IF NOT EXISTS TAB_CARRINHO(ID_MERCADO INTEGER,'+
+               'NOME_MERCADO VARCHAR(100), '+
+               'ENDERECO_MERCADO VARCHAR(100), '+
+               'TAXA_ENTREGA DECIMAL(9,2))');
+
+  conn.ExecSQL('CREATE TABLE IF NOT EXISTS TAB_CARRINHO_ITEM(ID_PRODUTO INTEGER,'+
+               'URL_FOTO VARCHAR(1000), '+
+               'NOME_PRODUTO VARCHAR(100), '+
+               'UNIDADE VARCHAR(100),'+
+               'QTD DECIMAL(9,2), '+
+               'VALOR_UNITARIO DECIMAL(9,2),'+
+               'VALOR_TOTAL DECIMAL(9,2))');
+end;
+
+//antes de conectar criar o banco
+procedure TDmUsuario.connBeforeConnect(Sender: TObject);
+begin
+  conn.DriverName := 'SQLite';
+  {$IFDEF MSWINDOWS}
+  conn.Params.Values['Database'] := System.SysUtils.GetCurrentDir + '\banco.db';
+  {$ELSE}
+  conn.Params.Values['Database'] := TPath.Combine(TPath.GetDocumentsPath, 'banco.db');
+  {$ENDIF}
 end;
 
 //criar conta

@@ -11,7 +11,22 @@ object DmUsuario: TDmUsuario
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 112
+    Left = 24
+    Top = 40
+  end
+  object conn: TFDConnection
+    AfterConnect = connAfterConnect
+    BeforeConnect = connBeforeConnect
+    Left = 128
+    Top = 40
+  end
+  object QryGeral: TFDQuery
+    Connection = conn
+    Left = 72
+    Top = 136
+  end
+  object FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink
+    Left = 160
     Top = 96
   end
 end

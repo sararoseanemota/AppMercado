@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts,
-  System.Net.HttpClientComponent, System.Net.HttpClient, uLoading;
+  System.Net.HttpClientComponent, System.Net.HttpClient, uLoading, uFunctions;
 
 type
   TFrmProduto = class(TForm)
@@ -16,7 +16,6 @@ type
     lytFoto: TLayout;
     imgFoto: TImage;
     lblNome: TLabel;
-    lblInformacao: TLabel;
     lytPreco: TLayout;
     lblValor: TLabel;
     rctBottom: TRectangle;
@@ -29,16 +28,18 @@ type
     lytDescricao: TLayout;
     lblDescricao: TLabel;
     lyt1: TLayout;
-    Layout1: TLayout;
     lblUnidade: TLabel;
+    lytAdCarrinho: TLayout;
     procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure lblUnidade1Click(Sender: TObject);
+    procedure imgVoltarClick(Sender: TObject);
+    procedure imgMenosClick(Sender: TObject);
   private
     FId_produto: Integer;
-    procedure LoadImageFromURL(img: TBitmap; url: string);
     procedure CarregarDados;
     procedure ThreadDadosTerminate(Sender: TObject);
+    procedure Opacity(op: integer);
+    procedure Qtd(valor: integer);
     { Private declarations }
   public
     { Public declarations }
@@ -49,22 +50,32 @@ var
   FrmProduto: TFrmProduto;
 
 implementation
-
 {$R *.fmx}
 
 uses UnitPrincipal, DataModule.Mercado;
 
-procedure TFrmProduto.CarregarDados;
+//opacidade dos componentes
+procedure TFrmProduto.Opacity(op : integer);
 begin
-  var
+  imgFoto.Opacity := op;
+  lblNome.Opacity := op;
+  lblUnidade.Opacity :=op;
+  lblValor.Opacity := op;
+  lblDescricao.Opacity :=op;
+end;
+
+//carregar dados
+procedure TFrmProduto.CarregarDados;
+var
   t : TThread;
+begin
+  Qtd(0);
+  Opacity(0);
+  TLoading.Show(FrmProduto, '');
+
+  t := TThread.CreateAnonymousThread(procedure
   begin
-    TLoading.Show(FrmProduto, '');
-    t := TThread.CreateAnonymousThread(procedure
-    var
-    i : integer;
-    begin
-//    Sleep(3000); //teste do loading
+    //Sleep(3000); //teste do loading
 
     //buscando os dados do produto
     DmMercado.ListarProdutoId(Id_produto);
@@ -78,19 +89,22 @@ begin
            lblUnidade.Text := fieldbyname('unidade').asstring;
            lblValor.Text := FormatFloat(' R$#,##0.00', fieldbyname('preco').asfloat);
            lblDescricao.Text := fieldbyname('descricao').asstring;
-
         end);
+
+        //carregar foto do produto
+        LoadImageFromURL(imgFoto.Bitmap, fieldbyname('url_foto').asstring);
+
       end;
   end);
 
     t.OnTerminate := ThreadDadosTerminate; //rotina de erro
     t.Start;
-  end;
 end;
 
 //thread terminate dados
 procedure TFrmProduto.ThreadDadosTerminate(Sender: TObject);
 begin
+  Sleep(1500);
   TLoading.Hide; //parar de exibir a bolinha executando
 
   if Sender is TThread then
@@ -102,50 +116,23 @@ begin
     end;
   end;
 
-   //carregar foto do produto
+  Opacity(1);
 
 end;
 
+//carregar dados ao abrir a tela
 procedure TFrmProduto.FormShow(Sender: TObject);
 begin
    CarregarDados;
 end;
 
-
-procedure TFrmProduto.lblUnidade1Click(Sender: TObject);
+//botão voltar
+procedure TFrmProduto.imgVoltarClick(Sender: TObject);
 begin
-
+  close;
 end;
 
-//dowloand pela URL
-procedure TFrmProduto.LoadImageFromURL (img: TBitmap; url : string);
-var
-  http: TNetHttpClient;
-  vStream : TMemoryStream;
-begin
-  try
-    try
-      http := TNetHTTPClient.Create(nil);
-      vStream := TMemoryStream.Create;
-
-      if (Pos('https', LowerCase(url)) > 0) then
-        HTTP.SecureProtocols := [THTTPSecureProtocol.TLS1,
-                                 THTTPSecureProtocol.TLS11,
-                                 THTTPSecureProtocol.TLS12];
-     http.Get(url, vStream);
-     vStream.Position :=0;
-
-     img.LoadFromStream(vStream);
-
-    except
-    end;
-
-  finally
-    vStream.DisposeOf;
-    http.DisposeOf;
-  end;
-end;
-
+//ajustar largura
 procedure TFrmProduto.FormResize(Sender: TObject);
 begin
   if (FrmProduto.Width > 600) and (FrmProduto.Height > 600) then
@@ -157,5 +144,28 @@ begin
       lytFundo.Align := TAlignLayout.Client;
 end;
 
+//alterando a quantidade
+procedure TFrmProduto.Qtd(valor : integer);
+begin
+  try
+    if valor = 0 then
+      lblQtd.Tag := 1
+    else
+      lblQtd.Tag := lblQtd.Tag + valor;
+
+    if lblQtd.Tag <= 0 then
+        lblQtd.Tag := 1;
+  except
+    lblQtd.Tag := 1;
+  end;
+
+  lblQtd.Text := FormatFloat('00', lblQtd.Tag);
+end;
+
+//menos e mais qtd
+procedure TFrmProduto.imgMenosClick(Sender: TObject);
+begin
+  Qtd(TImage(Sender).Tag);
+end;
 
 end.
