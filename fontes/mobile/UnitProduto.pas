@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts,
-  System.Net.HttpClientComponent, System.Net.HttpClient, uLoading, uFunctions;
+  System.Net.HttpClientComponent, System.Net.HttpClient, uLoading,
+  uFunctions, FMX.DialogService;
 
 type
   TFrmProduto = class(TForm)
@@ -25,17 +26,25 @@ type
     lblQtd: TLabel;
     btnAdicionar: TButton;
     lytFundo: TLayout;
-    lytDescricao: TLayout;
     lblDescricao: TLabel;
     lyt1: TLayout;
-    lblUnidade: TLabel;
+    lblPreco: TLabel;
     lytAdCarrinho: TLayout;
+    lytInfo: TLayout;
+    lblInfo: TLabel;
+    lytEmb: TLayout;
+    lblUnidade: TLabel;
+    lblEmb: TLabel;
+    lytDesc: TLayout;
+    lblDesc: TLabel;
     procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure imgVoltarClick(Sender: TObject);
     procedure imgMenosClick(Sender: TObject);
+    procedure btnAdicionarClick(Sender: TObject);
   private
     FId_produto: Integer;
+    FId_Mercado: Integer;
     procedure CarregarDados;
     procedure ThreadDadosTerminate(Sender: TObject);
     procedure Opacity(op: integer);
@@ -44,6 +53,7 @@ type
   public
     { Public declarations }
   property Id_produto : Integer read FId_produto write FId_produto;
+  property Id_mercado : Integer read FId_Mercado write FId_Mercado;
   end;
 
 var
@@ -62,6 +72,32 @@ begin
   lblUnidade.Opacity :=op;
   lblValor.Opacity := op;
   lblDescricao.Opacity :=op;
+end;
+
+//adicionar carrinho
+procedure TFrmProduto.btnAdicionarClick(Sender: TObject);
+begin
+  //Consiste se possui pedido de outro mercado em aberto
+  if DmMercado.ExistePedidoLocal(Id_mercado) then
+  begin
+    TDialogService.MessageDialog('Você só pode adicionar itens de um mercado por vez. Deseja esvaziar a sacola e adicionar esse item?',
+                  TMsgDlgType.mtConfirmation,
+                  [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo],
+                  TMsgDlgBtn.mbNo,
+                  0,
+       procedure(const Aresult : TModalResult)
+       begin
+         if AResult = mrYes then
+         begin
+//             DmMercado.LimparCarrinho; //rotina
+//             DmMercado.AdicionarItemCarrinho;
+         end;
+       end);
+
+  end;
+  //else
+
+
 end;
 
 //carregar dados

@@ -23,9 +23,8 @@ uses
 
 begin
   Application.Initialize;
-  Application.CreateForm(TFrmPrincipal, FrmPrincipal);
   Application.CreateForm(TDmUsuario, DmUsuario);
-  Application.CreateForm(TFrmLogin, FrmLogin);
   Application.CreateForm(TDmMercado, DmMercado);
+  Application.CreateForm(TFrmLogin, FrmLogin);
   Application.Run;
 end.

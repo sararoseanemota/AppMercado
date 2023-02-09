@@ -2,9 +2,9 @@
 <BorlandProject>
 	<Transactions>
     <Transaction>2023/02/01 13:59:20.000.167,=D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Unit2.pas</Transaction>
-    <Transaction>2023/02/01 13:59:38.000.125,D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Units\uConsts.pas=D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Unit2.pas</Transaction>
-    <Transaction>2023/02/08 11:20:12.502,=D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Unit2.pas</Transaction>
-    <Transaction>2023/02/08 11:20:28.573,D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Units\uFunctions.pas=D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Unit2.pas</Transaction>
+    <Transaction>2023/02/01 13:59:38.000.125,D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Unit2.pas=D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Units\uConsts.pas</Transaction>
+    <Transaction>2023/02/08 11:20:12.000.502,=D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Unit2.pas</Transaction>
+    <Transaction>2023/02/08 11:20:28.000.573,D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Unit2.pas=D:\PCSARA\PROGRAMAÇÃO\AppMercado\fontes\mobile\Units\uFunctions.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="android-support-v4.dex.jar"/>

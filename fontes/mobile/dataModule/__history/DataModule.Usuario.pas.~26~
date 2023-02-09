@@ -1,0 +1,159 @@
+unit DataModule.Usuario;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  DataSet.Serialize.Config, RESTRequest4D, System.JSON, uConsts,
+  FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.FMXUI.Wait, System.IOUtils, FireDAC.DApt,
+  FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteWrapper.Stat,
+  FireDAC.Phys.SQLiteDef, FireDAC.Phys.SQLite;
+
+type
+  TDmUsuario = class(TDataModule)
+    TabUsuario: TFDMemTable;
+    conn: TFDConnection;
+    QryGeral: TFDQuery;
+    FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink;
+    procedure DataModuleCreate(Sender: TObject);
+    procedure connBeforeConnect(Sender: TObject);
+    procedure connAfterConnect(Sender: TObject);
+  private
+
+  public
+    procedure Login(email, senha: string);
+    procedure CriarConta(nome, email, senha, endereco, bairro, cidade, uf,
+      cep: string);
+    procedure SalvarUsuarioLocal(email, nome, endereco, bairro, cidade, uf,
+      cep: string);
+  end;
+
+var
+  DmUsuario: TDmUsuario;
+
+implementation
+{%CLASSGROUP 'FMX.Controls.TControl'}
+{$R *.dfm}
+
+procedure TDmUsuario.DataModuleCreate(Sender: TObject);
+begin
+  //TDataSetSerializeConfig.GetInstance.CaseNameDefinition := TCaseNameDefinition.cndLowerCamelCase;
+  TDataSetSerializeConfig.GetInstance.CaseNameDefinition := cndLower;
+  conn.Connected := true;
+end;
+
+// login
+procedure TDmUsuario.Login(email, senha: string);
+var
+  resp: IResponse;
+  json: TJSONObject;
+begin
+  try
+    json := TJSONObject.Create; //instaciar
+    json.AddPair('email', email); //corpo da requisição
+    json.AddPair('senha', senha); //corpo da requisição
+
+    //resposta
+    resp := TRequest.New.BaseURL(BASE_URL)
+            .Resource('usuarios/login')
+            .DataSetAdapter(TabUsuario)
+            .AddBody(json.ToJSON)
+            .Accept('application/json')
+            .BasicAuthentication(USER_NAME, PASSWORD)
+            .Post;
+    if (resp.StatusCode = 401) then
+        raise Exception.Create('E-mail ou senha inválida')
+    else if (resp.StatusCode <> 200) then
+        raise Exception.Create(resp.Content);
+  finally
+    json.DisposeOf; //destruindo o objeto json
+  end;
+
+end;
+
+//depois de conectar criar tabelas
+procedure TDmUsuario.connAfterConnect(Sender: TObject);
+begin
+  //usuario
+  conn.ExecSQL('CREATE TABLE IF NOT EXISTS'+
+               'TAB_USUARIO(ID_USUARIO INTEGER NOT NULL PRIMARY KEY, '+
+               'EMAIL VARCHAR (100), '+
+               'NOME VARCHAR(100), '+
+               'ENDERECO VARCHAR(100), '+
+               'BAIRRO VARCHAR(100), '+
+               'CIDADE VARCHAR(100), '+
+               'UF VARCHAR(100), '+
+               'CEP VARCHAR(100))');
+   //carrinho
+  conn.ExecSQL('CREATE TABLE IF NOT EXISTS'+
+               'TAB_CARRINHO(ID_MERCADO INTEGER NOT NULL PRIMARY KEY,'+
+               'NOME_MERCADO VARCHAR(100), '+
+               'ENDERECO_MERCADO VARCHAR(100), '+
+               'TAXA_ENTREGA DECIMAL(9,2))');
+
+  //itens do carrinho
+  conn.ExecSQL('CREATE TABLE IF NOT EXISTS TAB_CARRINHO_ITEM(ID_PRODUTO INTEGER,'+
+               'URL_FOTO VARCHAR(1000), '+
+               'NOME_PRODUTO VARCHAR(100), '+
+               'UNIDADE VARCHAR(100),'+
+               'QTD DECIMAL(9,2), '+
+               'VALOR_UNITARIO DECIMAL(9,2),'+
+               'VALOR_TOTAL DECIMAL(9,2))');
+end;
+
+//antes de conectar criar o banco
+procedure TDmUsuario.connBeforeConnect(Sender: TObject);
+begin
+  conn.DriverName := 'SQLite';
+  {$IFDEF MSWINDOWS}
+  conn.Params.Values['Database'] := System.SysUtils.GetCurrentDir + '\banco.db';
+  {$ELSE}
+  conn.Params.Values['Database'] := TPath.Combine(TPath.GetDocumentsPath, 'banco.db');
+  {$ENDIF}
+end;
+
+//criar conta
+procedure TDmUsuario.CriarConta(nome, email, senha, endereco, bairro, cidade, uf, cep: string);
+var
+  resp: IResponse;
+  json: TJSONObject;
+begin
+  try
+    json := TJSONObject.Create; //instaciar
+    json.AddPair('nome', nome);  //corpo da requisição
+    json.AddPair('email', email); 
+    json.AddPair('senha', senha); 
+    json.AddPair('endereco', endereco);
+    json.AddPair('bairro', bairro);  
+    json.AddPair('cidade', cidade); 
+    json.AddPair('uf ', uf);
+    json.AddPair('cep', cep);  
+
+    //resposta
+    resp := TRequest.New.BaseURL(BASE_URL)  // requisição
+            .Resource('usuarios/cadastro') //rota
+            .DataSetAdapter(TabUsuario)
+            .AddBody(json.ToJSON) //adicionar o json no corpo da requisicao
+            .Accept('application/json')
+            .BasicAuthentication(USER_NAME, PASSWORD)//autenticação
+            .Post;
+    if (resp.StatusCode = 401) then
+        raise Exception.Create('Usuário não autorizado')
+    else if (resp.StatusCode <> 201) then
+        raise Exception.Create(resp.Content);
+  finally
+    json.DisposeOf; //destruindo o objeto json
+  end;
+
+end;
+
+procedure TDmUsuario.SalvarUsuarioLocal(email, nome, endereco,bairro, cidade, uf, cep : string );
+begin
+
+
+end;
+
+end.

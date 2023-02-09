@@ -136,7 +136,8 @@ begin
    if NOT Assigned(FrmProduto) then
     Application.CreateForm(TFrmProduto, FrmProduto);
 
-    FrmProduto.Id_produto := Item.tag;
+    FrmProduto.Id_mercado := FrmMercado.Id_mercado; //id mercado selecionado
+    FrmProduto.Id_produto := Item.tag; //id produto selecionado
     FrmProduto.Show;
 end;
 
@@ -324,7 +325,7 @@ begin
   var
     i : integer;
   begin
-//    Sleep(3000); //teste do loading
+   //Sleep(3000); //teste do loading
 
     //listando os dados do mercado
     DmMercado.ListarMercadoId(Id_mercado);

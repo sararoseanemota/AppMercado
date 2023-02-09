@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  RESTRequest4D, DataSet.Serialize.Config, uConsts;
+  RESTRequest4D, DataSet.Serialize.Config, uConsts, FireDAC.Stan.Async,
+  FireDAC.DApt;
 
 type
   TDmMercado = class(TDataModule)
@@ -14,6 +15,7 @@ type
     TabCategoria: TFDMemTable;
     TabProduto: TFDMemTable;
     TabProdDetalhe: TFDMemTable;
+    QryMercado: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
 
@@ -25,12 +27,16 @@ type
     procedure ListarCategoria(id_mercado: integer);
     procedure ListarProduto(id_mercado, id_categoria : integer; busca : string);
     procedure ListarProdutoId(id_produto: integer);
+    function ExistePedidoLocal(id_mercado: integer): Boolean;
   end;
 
 var
   DmMercado: TDmMercado;
 
 implementation
+
+uses
+  DataModule.Usuario;
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
@@ -61,7 +67,7 @@ begin
         raise Exception.Create(resp.Content);
 end;
 
-// listar mercados
+//listar mercados
 procedure TDmMercado.ListarMercadoId(id_mercado : integer);
 var
   resp: IResponse;
@@ -133,6 +139,22 @@ begin
 
     if (resp.StatusCode <> 200) then
         raise Exception.Create(resp.Content);
+end;
+
+//Pedido no carrino EXISTE
+function TDmMercado.ExistePedidoLocal(id_mercado: integer) : Boolean;
+begin
+  with DmMercado.QryMercado do
+  begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('SELECT * FROM TAB_CARRINHO WHERE ID_MERCADO <> :ID_MERCADO');
+      ParamByName('ID_MERCADO').value := id_mercado;
+      Active := true;
+
+      Result := RecordCount > 0;
+  end;
+
 end;
 
 end.

@@ -18,15 +18,19 @@ type
     conn: TFDConnection;
     QryGeral: TFDQuery;
     FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink;
+    QryUsuario: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure connBeforeConnect(Sender: TObject);
     procedure connAfterConnect(Sender: TObject);
   private
-  
+
+
   public
     procedure Login(email, senha: string);
     procedure CriarConta(nome, email, senha, endereco, bairro, cidade, uf,
       cep: string);
+    procedure SalvarUsuarioLocal(id_usuario : integer; email, nome, endereco,bairro, cidade, uf, cep : string );
+    procedure ListarUsuarioLocal;
   end;
 
 var
@@ -36,6 +40,7 @@ implementation
 {%CLASSGROUP 'FMX.Controls.TControl'}
 {$R *.dfm}
 
+//create
 procedure TDmUsuario.DataModuleCreate(Sender: TObject);
 begin
   //TDataSetSerializeConfig.GetInstance.CaseNameDefinition := TCaseNameDefinition.cndLowerCamelCase;
@@ -75,19 +80,24 @@ end;
 //depois de conectar criar tabelas
 procedure TDmUsuario.connAfterConnect(Sender: TObject);
 begin
-  conn.ExecSQL('CREATE TABLE IF NOT EXISTS TAB_USUARIO(EMAIL VARCHAR (100), '+
+  //usuario
+  conn.ExecSQL('CREATE TABLE IF NOT EXISTS '+
+               'TAB_USUARIO(ID_USUARIO INTEGER NOT NULL PRIMARY KEY, '+
+               'EMAIL VARCHAR (100), '+
                'NOME VARCHAR(100), '+
                'ENDERECO VARCHAR(100), '+
                'BAIRRO VARCHAR(100), '+
                'CIDADE VARCHAR(100), '+
                'UF VARCHAR(100), '+
                'CEP VARCHAR(100))');
-
-  conn.ExecSQL('CREATE TABLE IF NOT EXISTS TAB_CARRINHO(ID_MERCADO INTEGER,'+
+   //carrinho
+  conn.ExecSQL('CREATE TABLE IF NOT EXISTS '+
+               'TAB_CARRINHO(ID_MERCADO INTEGER NOT NULL PRIMARY KEY, '+
                'NOME_MERCADO VARCHAR(100), '+
                'ENDERECO_MERCADO VARCHAR(100), '+
                'TAXA_ENTREGA DECIMAL(9,2))');
 
+  //itens do carrinho
   conn.ExecSQL('CREATE TABLE IF NOT EXISTS TAB_CARRINHO_ITEM(ID_PRODUTO INTEGER,'+
                'URL_FOTO VARCHAR(1000), '+
                'NOME_PRODUTO VARCHAR(100), '+
@@ -142,4 +152,44 @@ begin
   end;
 
 end;
+
+//Listar Usuario Local
+procedure TDmUsuario.ListarUsuarioLocal;
+begin
+  with QryUsuario do
+  begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('SELECT * FROM TAB_USUARIO');
+      Active := true;
+  end;
+
+end;
+
+//Salvar o usuario Local
+procedure TDmUsuario.SalvarUsuarioLocal(id_usuario : integer; email, nome, endereco,bairro, cidade, uf, cep : string );
+begin
+  with QryUsuario do
+  begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('INSERT OR REPLACE INTO TAB_USUARIO(ID_USUARIO, EMAIL, NOME,');
+      SQL.Add('ENDERECO, BAIRRO, CIDADE ,UF , CEP)');
+      SQL.Add('VALUES (:ID_USUARIO, :EMAIL, :NOME,');
+      SQL.Add(':ENDERECO, :BAIRRO, :CIDADE, :UF ,:CEP)');
+
+      ParamByName('ID_USUARIO').Value := id_usuario;
+      ParamByName('EMAIL').Value := email;
+      ParamByName('NOME').Value := nome;
+      ParamByName('ENDERECO').Value := endereco;
+      ParamByName('BAIRRO').Value := bairro;
+      ParamByName('CIDADE').Value :=  cidade;
+      ParamByName('UF').Value := uf;
+      ParamByName('CEP').Value := cep;
+
+      ExecSQL;
+  end;
+
+end;
+
 end.
