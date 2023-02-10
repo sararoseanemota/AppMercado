@@ -36,7 +36,7 @@ CREATE TABLE `mercado` (
   `ind_entrega` char(1) DEFAULT NULL,
   `ind_retira` char(1) DEFAULT NULL,
   PRIMARY KEY (`id_mercado`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +45,7 @@ CREATE TABLE `mercado` (
 
 LOCK TABLES `mercado` WRITE;
 /*!40000 ALTER TABLE `mercado` DISABLE KEYS */;
-INSERT INTO `mercado` VALUES (1,'Pão','Av. Interlagos, 850','Interlagos','São Paulo','SP','05410-010','2023-01-24 16:40:24',8.50,30.00,'N','N'),(2,'DiaAdia','Av. Paulista, 10','Zona Leste','São Paulo','SP','05310-020','2023-01-26 09:34:36',15.99,100.00,'S','S');
+INSERT INTO `mercado` VALUES (1,'Pão','Av. Interlagos, 850','Interlagos','São Paulo','SP','05410-010','2023-01-24 16:40:24',8.50,30.00,'S','N'),(2,'DiaAdia','Av. Paulista, 10','Zona Leste','São Paulo','SP','05310-020','2023-01-26 09:34:36',15.99,100.00,'S','S'),(3,'Ultrabox','QNN 30, AE 02 Lote 02/10','Sul','Brasília','DF','05310-020','2023-02-01 09:09:46',20.00,150.00,'S','S'),(4,'Fort Atacadista','QNN 02, AE 02 Lote 14/30','Centro','Brasília','DF','05380-020','2023-02-01 09:09:46',20.00,100.00,'S','N');
 /*!40000 ALTER TABLE `mercado` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,7 +140,7 @@ CREATE TABLE `produto` (
   KEY `id_categoria` (`id_categoria`),
   CONSTRAINT `produto_ibfk_1` FOREIGN KEY (`id_mercado`) REFERENCES `mercado` (`id_mercado`),
   CONSTRAINT `produto_ibfk_2` FOREIGN KEY (`id_categoria`) REFERENCES `produto_categoria` (`id_categoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,7 +149,7 @@ CREATE TABLE `produto` (
 
 LOCK TABLES `produto` WRITE;
 /*!40000 ALTER TABLE `produto` DISABLE KEYS */;
-INSERT INTO `produto` VALUES (1,1,'Café Pilão Torrado e Moído','Café Pilão torrado e moído embalado a vacuo','250g',9.75,'https://static.paodeacucar.com/img/uploads/1/671/669671x200x200.jpg',1),(2,1,'Café 3 Corações Torrado e Moído','Café 3 Corações torrado e moído embalado a vacuo','500g',18.99,'https://static.paodeacucar.com/img/uploads/1/2/656002x200x200.png',1),(3,2,'Cerveja Heineken Lata','O processo de fermentação da Heineken, a exclusiva Levedura A é responsável pelo sabor característico e bem equilibrado, com notas frutadas sutis.','350ml',4.80,'https://static.paodeacucar.com/img/uploads/1/623/17634623x200x200.png',1);
+INSERT INTO `produto` VALUES (1,1,'Café Pilão Torrado e Moído','Café Pilão torrado e moído embalado a vacuo','250g',9.75,'https://static.paodeacucar.com/img/uploads/1/671/669671x200x200.jpg',1),(2,1,'Café 3 Corações Torrado e Moído','Café 3 Corações torrado e moído embalado a vacuo','500g',18.99,'https://static.paodeacucar.com/img/uploads/1/2/656002x200x200.png',1),(3,2,'Cerveja Heineken Lata','O processo de fermentação da Heineken, a exclusiva Levedura A é responsável pelo sabor característico e bem equilibrado, com notas frutadas sutis.','350ml',4.80,'https://static.paodeacucar.com/img/uploads/1/623/17634623x200x200.png',1),(4,3,'Papel Higienico','Papel Higienico Neve','24 und',20.99,'https://static.paodeacucar.com/img/uploads/1/37/12886037.jpg',1),(5,3,'Papel Higienico','Papel Higienico Neve','24 und',20.99,'https://static.paodeacucar.com/img/uploads/1/37/12886037.jpg',2),(6,3,'Papel Higienico','Papel Higienico Neve','24 und',20.99,'https://static.paodeacucar.com/img/uploads/1/37/12886037.jpg',2),(7,5,'Caderno','Caderno Rosa','1 und',15.99,'https://static.paodeacucar.com/img/uploads/1/962/24110962.jpg',1),(8,2,'Vinho Mancura Mito Carmenere','Vinho Mancura Mito Carmenere','750 ml',84.45,'https://static.paodeacucar.com/img/uploads/1/927/24653927.jpeg',1),(9,2,'Coca-Cola Original','Coca-Cola Original','1,5 lt',8.99,'https://static.paodeacucar.com/img/uploads/1/191/24599191.jpg',1);
 /*!40000 ALTER TABLE `produto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,7 +197,7 @@ CREATE TABLE `usuario` (
   `cep` varchar(10) DEFAULT NULL,
   `dt_cadastro` datetime DEFAULT NULL,
   PRIMARY KEY (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,7 +206,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Heber Stein Mazutti','heber@teste.com.br','12345','Av Paulista, 1500','Bela Vista','São Paulo','SP','03015-500','2023-01-24 16:40:24'),(2,'João Silva','joao@teste.com.br','12345','Av Interlagos, 555','Interlagos','São Paulo','SP','15850-010','2023-01-24 16:40:24'),(3,'Sara Mota','sara@teste.com.br','12345','Rua 45, casa 05','Taguatinga','Brasilia','DF','72258-410','2023-01-25 16:45:31');
+INSERT INTO `usuario` VALUES (1,'Heber Stein Mazutti','heber@teste.com.br','12345','Av Paulista, 1500','Bela Vista','São Paulo','SP','03015-500','2023-01-24 16:40:24'),(2,'João Silva','joao@teste.com.br','12345','Av Interlagos, 555','Interlagos','São Paulo','SP','15850-010','2023-01-24 16:40:24'),(3,'Sara Mota','sara@teste.com.br','12345','Rua 45, casa 05','Taguatinga','Brasilia','DF','72258-410','2023-01-25 16:45:31'),(4,'Italo','italo@teste.com.br','12345','Rua 05','Centro','Abb',NULL,'7212584','2023-01-31 11:01:12'),(5,'Sara','sara@teste.com','1234','Rua','Rua','Centro','DF','12345678','2023-01-31 11:22:38'),(6,'Jair','jair@teste.com','1234','Rua ','Centro','Cei',NULL,'12345678','2023-01-31 11:26:08'),(7,'sara','sara','123','teste','teste','teste',NULL,'12345678','2023-01-31 12:06:18'),(8,'Maria','maria@teste.com','1234','Rua 05','Sul','Rio',NULL,'12345678','2023-01-31 13:41:41'),(9,'Maria','maria@teste.com','1234','Rua 05','Sul','Rio',NULL,'12345678','2023-01-31 13:42:16'),(10,'Maria','maria@teste.com','1234','Rua 05','Sul','Rio',NULL,'12345678','2023-01-31 13:42:23'),(11,'José','jose@teste.com','123','Rua x','Norte','Ceará',NULL,'12345-789','2023-01-31 13:43:17'),(12,'Ruan','ruan@teste.com','12','teste','teste','teste','tt','72235-413','2023-01-31 13:46:06'),(13,'','','','','','',NULL,'','2023-01-31 13:53:32'),(14,'','','','','','','','','2023-01-31 13:55:18'),(15,'','','','','','',NULL,'','2023-01-31 14:00:15'),(16,'','','','','','',NULL,'','2023-01-31 14:01:05'),(17,'Isa','isa@teste.com.br','12345','Rua 21','Centro','Brasilia',NULL,'72.000-000','2023-02-09 15:10:53');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -227,4 +227,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-26 17:55:49
+-- Dump completed on 2023-02-10 17:40:03
