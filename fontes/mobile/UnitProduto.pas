@@ -37,14 +37,19 @@ type
     lblEmb: TLabel;
     lytDesc: TLayout;
     lblDesc: TLabel;
+    ln1: TLine;
     procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure imgVoltarClick(Sender: TObject);
     procedure imgMenosClick(Sender: TObject);
     procedure btnAdicionarClick(Sender: TObject);
+    procedure ln1Click(Sender: TObject);
   private
     FId_produto: Integer;
     FId_Mercado: Integer;
+    FNome_Mercado: String;
+    FTaxa_entrega: Double;
+    FEndereco_mercado: String;
     procedure CarregarDados;
     procedure ThreadDadosTerminate(Sender: TObject);
     procedure Opacity(op: integer);
@@ -54,6 +59,9 @@ type
     { Public declarations }
   property Id_produto : Integer read FId_produto write FId_produto;
   property Id_mercado : Integer read FId_Mercado write FId_Mercado;
+  property Nome_mercado : String read FNome_Mercado write FNome_Mercado;
+  property Endereco_mercado : String read FEndereco_mercado write FEndereco_mercado;
+  property Taxa_entrega :Double read FTaxa_entrega write FTaxa_entrega;
   end;
 
 var
@@ -89,8 +97,11 @@ begin
        begin
          if AResult = mrYes then
          begin
-//             DmMercado.LimparCarrinho; //rotina
-//             DmMercado.AdicionarItemCarrinho;
+          //rotina
+          DmMercado.LimparCarrinho;
+          DmMercado.AdicionarCarrinho(Id_mercado, Nome_mercado, Endereco_mercado, Taxa_entrega);
+          //DmMercado.AdicionarItemCarrinho;
+
          end;
        end);
 
@@ -166,6 +177,11 @@ end;
 procedure TFrmProduto.imgVoltarClick(Sender: TObject);
 begin
   close;
+end;
+
+procedure TFrmProduto.ln1Click(Sender: TObject);
+begin
+
 end;
 
 //ajustar largura

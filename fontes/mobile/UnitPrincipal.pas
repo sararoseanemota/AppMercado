@@ -183,12 +183,13 @@ begin
 
 end;
 
-//show
+
 procedure TFrmPrincipal.btnBuscarClick(Sender: TObject);
 begin
   ListarMercados;
 end;
 
+//show
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
   SelecionarEntrega(lblCasa);

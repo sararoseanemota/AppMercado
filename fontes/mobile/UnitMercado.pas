@@ -136,6 +136,9 @@ begin
    if NOT Assigned(FrmProduto) then
     Application.CreateForm(TFrmProduto, FrmProduto);
 
+    FrmProduto.Nome_mercado := lblTitulo.Text;
+    FrmProduto.Endereco_mercado := lblEndereco.Text;
+    FrmProduto.Taxa_entrega := lblEntrega.TagFloat;
     FrmProduto.Id_mercado := FrmMercado.Id_mercado; //id mercado selecionado
     FrmProduto.Id_produto := Item.tag; //id produto selecionado
     FrmProduto.Show;
@@ -338,6 +341,7 @@ begin
            lblTitulo.Text := FieldByName('nome').AsString;
            lblEndereco.Text := fieldbyname('endereco').asstring;
            lblEntrega.Text := 'Entrega:' + FormatFloat(' R$#,##0.00', fieldbyname('vl_entrega').asfloat);
+           lblEntrega.TagFloat := FieldByName('vl_entrega').AsFloat;
            lblPedMin.Text := 'Compra Mín:' + FormatFloat(' R$#,##0.00', fieldbyname('vl_compra_min').asfloat);
         end);
 

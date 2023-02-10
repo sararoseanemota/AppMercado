@@ -16,9 +16,9 @@ type
     TabProduto: TFDMemTable;
     TabProdDetalhe: TFDMemTable;
     QryMercado: TFDQuery;
+    QryCarrinho: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
-
       { Private declarations }
   public
     { Public declarations }
@@ -28,6 +28,9 @@ type
     procedure ListarProduto(id_mercado, id_categoria : integer; busca : string);
     procedure ListarProdutoId(id_produto: integer);
     function ExistePedidoLocal(id_mercado: integer): Boolean;
+    procedure LimparCarrinho;
+    procedure AdicionarCarrinho(Id_mercado: Integer; Nome_mercado,
+      Endereco_mercado: string; Taxa_entrega: Double);
   end;
 
 var
@@ -144,7 +147,7 @@ end;
 //Pedido no carrino EXISTE
 function TDmMercado.ExistePedidoLocal(id_mercado: integer) : Boolean;
 begin
-  with DmMercado.QryMercado do
+  with QryMercado do
   begin
       Active := False;
       SQL.Clear;
@@ -157,4 +160,24 @@ begin
 
 end;
 
+procedure TDmMercado.LimparCarrinho;
+begin
+  with QryCarrinho do
+  begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('DELETE FROM TAB_CARRINHO');
+      ExecSQL;
+
+      Active := False;
+      SQL.Clear;
+      SQL.Add('DELETE FROM TAB_CARRINHO_ITEM');
+      ExecSQL;
+  end;
+end;
+
+procedure TDmMercado.AdicionarCarrinho(Id_mercado : Integer; Nome_mercado, Endereco_mercado : string; Taxa_entrega : Double);
+begin
+
+end;
 end.
