@@ -93,21 +93,29 @@ begin
                   [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo],
                   TMsgDlgBtn.mbNo,
                   0,
-       procedure(const Aresult : TModalResult)
+       procedure(const AResult : TModalResult)
        begin
          if AResult = mrYes then
          begin
           //rotina
-          DmMercado.LimparCarrinho;
-          DmMercado.AdicionarCarrinho(Id_mercado, Nome_mercado, Endereco_mercado, Taxa_entrega);
-          //DmMercado.AdicionarItemCarrinho;
+          DmMercado.LimparCarrinhoLocal;
+          DmMercado.AdicionarCarrinhoLocal(Id_mercado, Nome_mercado, Endereco_mercado, Taxa_entrega);
+          DmMercado.AdicionarItemCarrinhoLocal(Id_produto, imgFoto.TagString, lblNome.Text,
+                                          lblUnidade.Text, lblQtd.Tag,lblValor.TagFloat);
 
          end;
        end);
 
-  end;
-  //else
+  end
+  else
+  begin
+     DmMercado.AdicionarCarrinhoLocal(Id_mercado, Nome_mercado, Endereco_mercado, Taxa_entrega);
+     DmMercado.AdicionarItemCarrinhoLocal(Id_produto, imgFoto.TagString, lblNome.Text,
+                                    lblUnidade.Text, lblQtd.Tag,lblValor.TagFloat);
 
+  end;
+
+  Close;
 
 end;
 
@@ -135,9 +143,11 @@ begin
            lblNome.Text := FieldByName('nome').AsString;
            lblUnidade.Text := fieldbyname('unidade').asstring;
            lblValor.Text := FormatFloat(' R$#,##0.00', fieldbyname('preco').asfloat);
+           lblValor.TagFloat := fieldbyname('preco').asfloat;
            lblDescricao.Text := fieldbyname('descricao').asstring;
         end);
 
+        imgFoto.TagString := fieldbyname('url_foto').asstring;
         //carregar foto do produto
         LoadImageFromURL(imgFoto.Bitmap, fieldbyname('url_foto').asstring);
 
@@ -151,7 +161,7 @@ end;
 //thread terminate dados
 procedure TFrmProduto.ThreadDadosTerminate(Sender: TObject);
 begin
-  Sleep(1500);
+  //Sleep(1500);
   TLoading.Hide; //parar de exibir a bolinha executando
 
   if Sender is TThread then

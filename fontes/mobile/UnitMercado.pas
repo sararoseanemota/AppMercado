@@ -40,6 +40,7 @@ type
       const Item: TListBoxItem);
     procedure btnBuscarClick(Sender: TObject);
     procedure imgVoltarClick(Sender: TObject);
+    procedure imgCarrinhoClick(Sender: TObject);
   private
     FId_Mercado: Integer;
     procedure AddProduto(id_produto: integer; descricao, unidade, url_foto: string; valor : double);
@@ -64,7 +65,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnitPrincipal, Frame.ProdutoCard, UnitProduto, DataModule.Mercado;
+uses UnitPrincipal, Frame.ProdutoCard, UnitProduto, DataModule.Mercado, UnitCarrinho;
 
 
 
@@ -153,7 +154,7 @@ begin
   TLoading.Show(FrmMercado, '');
   t := TThread.CreateAnonymousThread(procedure
   begin
-//    Sleep(1500);
+   //Sleep(1500);
     DmMercado.ListarProduto(Id_mercado, id_categoria, busca);
 
     with DmMercado.TabProduto do
@@ -381,6 +382,15 @@ end;
 procedure TFrmMercado.FormShow(Sender: TObject);
 begin
   CarregarDados;  //Dados: Mercado, categorias, produtos...
+end;
+
+
+procedure TFrmMercado.imgCarrinhoClick(Sender: TObject);
+begin
+  if not Assigned(FrmCarrinho) then
+    Application.CreateForm(TFrmCarrinho, FrmCarrinho);
+
+  FrmCarrinho.Show;
 end;
 
 //finalizar tela

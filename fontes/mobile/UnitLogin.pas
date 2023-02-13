@@ -187,7 +187,7 @@ begin
 
   t := TThread.CreateAnonymousThread(procedure
   begin
-    Sleep(1500); //teste do loading
+    //Sleep(1500); //teste do loading
     DmUsuario.Login(edtEmail.Text, edtSenha.Text);
 
     //salvar dados no banco do aparelho

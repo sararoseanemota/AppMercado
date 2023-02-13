@@ -146,7 +146,7 @@ begin
 var
   i : integer;
   begin
-    Sleep(1500); //teste do loading
+    //Sleep(1500); //teste do loading
     DmMercado.ListarMercado(edtPesquisa.Text, Ind_Entrega, Ind_Retira);
 
     //

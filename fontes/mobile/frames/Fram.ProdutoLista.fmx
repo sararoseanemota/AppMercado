@@ -93,7 +93,7 @@ object FrameProdutoLista: TFrameProdutoLista
       TextSettings.Font.Size = 14.000000000000000000
       TextSettings.FontColor = xFF565656
       TextSettings.VertAlign = Leading
-      Text = '02 x R$3,00/kg'
+      Text = '02  x  R$3,00/kg'
       TabOrder = 1
     end
   end

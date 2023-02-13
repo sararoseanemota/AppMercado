@@ -6,6 +6,7 @@ uses FMX.Graphics, System.Net.HttpClientComponent, System.Classes,
 System.SysUtils, System.Net.HttpClient;
 
 procedure LoadImageFromURL (img: TBitmap; url : string);
+function Round2(aValue: double) : Double;
 
 implementation
 
@@ -39,4 +40,8 @@ begin
 end;
 
 
+function Round2(aValue: double) : Double;
+begin
+   Round2:= Round(aValue*100)/100;
+end;
 end.
