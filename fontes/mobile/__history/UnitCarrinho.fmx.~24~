@@ -2,7 +2,7 @@ object FrmCarrinho: TFrmCarrinho
   Left = 0
   Top = 0
   Caption = 'Carrinho De Compras'
-  ClientHeight = 510
+  ClientHeight = 524
   ClientWidth = 317
   Fill.Kind = Solid
   StyleBook = FrmPrincipal.StyleBook
@@ -97,6 +97,7 @@ object FrmCarrinho: TFrmCarrinho
       Size.Width = 33.000000000000000000
       Size.Height = 50.000000000000000000
       Size.PlatformDefault = False
+      OnClick = imgVoltarClick
     end
   end
   object lytEndereco: TLayout
@@ -129,7 +130,7 @@ object FrmCarrinho: TFrmCarrinho
       Position.X = 15.000000000000000000
       Position.Y = 33.000000000000000000
       Size.Width = 287.000000000000000000
-      Size.Height = 16.000000000000000000
+      Size.Height = 24.000000000000000000
       Size.PlatformDefault = False
       TextSettings.Font.Size = 14.000000000000000000
       TextSettings.FontColor = xFF747474
@@ -146,7 +147,7 @@ object FrmCarrinho: TFrmCarrinho
     Margins.Right = 15.000000000000000000
     Margins.Bottom = 10.000000000000000000
     Position.X = 15.000000000000000000
-    Position.Y = 464.000000000000000000
+    Position.Y = 478.000000000000000000
     Size.Width = 287.000000000000000000
     Size.Height = 36.000000000000000000
     Size.PlatformDefault = False
@@ -158,7 +159,7 @@ object FrmCarrinho: TFrmCarrinho
   object rctngl: TRectangle
     Align = Bottom
     Fill.Color = claWhite
-    Position.Y = 288.000000000000000000
+    Position.Y = 302.000000000000000000
     Sides = [Top]
     Size.Width = 317.000000000000000000
     Size.Height = 161.000000000000000000
@@ -167,7 +168,7 @@ object FrmCarrinho: TFrmCarrinho
     object lytSubTotal: TLayout
       Align = Top
       Size.Width = 317.000000000000000000
-      Size.Height = 33.000000000000000000
+      Size.Height = 25.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 4
       object lblSubTotal: TLabel
@@ -177,10 +178,9 @@ object FrmCarrinho: TFrmCarrinho
         Margins.Right = 15.000000000000000000
         Position.X = 10.000000000000000000
         Size.Width = 103.000000000000000000
-        Size.Height = 33.000000000000000000
+        Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
         TextSettings.Font.Size = 14.000000000000000000
-        TextSettings.Font.StyleExt = {00070000000000000004000000}
         TextSettings.FontColor = xFF747474
         Text = 'Sub-Total'
         TabOrder = 1
@@ -192,7 +192,7 @@ object FrmCarrinho: TFrmCarrinho
         Margins.Right = 15.000000000000000000
         Position.X = 199.000000000000000000
         Size.Width = 103.000000000000000000
-        Size.Height = 33.000000000000000000
+        Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
         TextSettings.Font.Size = 14.000000000000000000
         TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -204,9 +204,9 @@ object FrmCarrinho: TFrmCarrinho
     end
     object lytTaxa: TLayout
       Align = Top
-      Position.Y = 33.000000000000000000
+      Position.Y = 25.000000000000000000
       Size.Width = 317.000000000000000000
-      Size.Height = 32.000000000000000000
+      Size.Height = 25.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       object lblTaxa: TLabel
@@ -216,10 +216,9 @@ object FrmCarrinho: TFrmCarrinho
         Margins.Right = 15.000000000000000000
         Position.X = 10.000000000000000000
         Size.Width = 207.000000000000000000
-        Size.Height = 32.000000000000000000
+        Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
         TextSettings.Font.Size = 14.000000000000000000
-        TextSettings.Font.StyleExt = {00070000000000000004000000}
         TextSettings.FontColor = xFF747474
         Text = 'Taxa de Entrega'
         TabOrder = 1
@@ -231,7 +230,7 @@ object FrmCarrinho: TFrmCarrinho
         Margins.Right = 15.000000000000000000
         Position.X = 199.000000000000000000
         Size.Width = 103.000000000000000000
-        Size.Height = 32.000000000000000000
+        Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
         TextSettings.Font.Size = 14.000000000000000000
         TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -244,9 +243,9 @@ object FrmCarrinho: TFrmCarrinho
     end
     object lytTotal: TLayout
       Align = Top
-      Position.Y = 65.000000000000000000
+      Position.Y = 50.000000000000000000
       Size.Width = 317.000000000000000000
-      Size.Height = 31.000000000000000000
+      Size.Height = 25.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 3
       object lblTotal: TLabel
@@ -256,10 +255,9 @@ object FrmCarrinho: TFrmCarrinho
         Margins.Right = 15.000000000000000000
         Position.X = 10.000000000000000000
         Size.Width = 103.000000000000000000
-        Size.Height = 31.000000000000000000
+        Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
         TextSettings.Font.Size = 14.000000000000000000
-        TextSettings.Font.StyleExt = {00070000000000000004000000}
         TextSettings.FontColor = xFF747474
         Text = 'Valor Total'
         TabOrder = 1
@@ -269,9 +267,9 @@ object FrmCarrinho: TFrmCarrinho
         StyledSettings = [Family]
         Margins.Left = 10.000000000000000000
         Margins.Right = 15.000000000000000000
-        Position.X = 240.000000000000000000
-        Size.Width = 62.000000000000000000
-        Size.Height = 31.000000000000000000
+        Position.X = 192.000000000000000000
+        Size.Width = 110.000000000000000000
+        Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
         TextSettings.Font.Size = 14.000000000000000000
         TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -285,12 +283,11 @@ object FrmCarrinho: TFrmCarrinho
       Align = Top
       StyledSettings = [Family]
       Margins.Left = 10.000000000000000000
-      Margins.Top = 10.000000000000000000
       Margins.Right = 10.000000000000000000
       Position.X = 10.000000000000000000
-      Position.Y = 106.000000000000000000
+      Position.Y = 81.000000000000000000
       Size.Width = 297.000000000000000000
-      Size.Height = 31.000000000000000000
+      Size.Height = 24.000000000000000000
       Size.PlatformDefault = False
       TextSettings.Font.Size = 16.000000000000000000
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -304,20 +301,30 @@ object FrmCarrinho: TFrmCarrinho
       Margins.Left = 10.000000000000000000
       Margins.Right = 15.000000000000000000
       Position.X = 10.000000000000000000
-      Position.Y = 137.000000000000000000
+      Position.Y = 105.000000000000000000
       Size.Width = 292.000000000000000000
-      Size.Height = 32.000000000000000000
+      Size.Height = 40.000000000000000000
       Size.PlatformDefault = False
       TextSettings.Font.Size = 14.000000000000000000
       TextSettings.FontColor = xFF747474
       Text = 'SCEE / Sul Lote B - Guar'#225
       TabOrder = 0
     end
+    object ln1: TLine
+      Align = Top
+      LineType = Top
+      Margins.Top = 5.000000000000000000
+      Position.Y = 80.000000000000000000
+      Size.Width = 317.000000000000000000
+      Size.Height = 1.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Color = xFFCCCCCC
+    end
   end
   object lbProdutos: TListBox
     Align = Client
     Size.Width = 317.000000000000000000
-    Size.Height = 175.000000000000000000
+    Size.Height = 189.000000000000000000
     Size.PlatformDefault = False
     StyleLookup = 'transparentlistboxstyle'
     TabOrder = 4
@@ -326,6 +333,6 @@ object FrmCarrinho: TFrmCarrinho
     DefaultItemStyles.GroupHeaderStyle = ''
     DefaultItemStyles.GroupFooterStyle = ''
     Viewport.Width = 317.000000000000000000
-    Viewport.Height = 175.000000000000000000
+    Viewport.Height = 189.000000000000000000
   end
 end
