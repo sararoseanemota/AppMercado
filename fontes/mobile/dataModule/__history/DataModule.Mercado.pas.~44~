@@ -17,7 +17,7 @@ type
     TabProdDetalhe: TFDMemTable;
     QryMercado: TFDQuery;
     QryCarrinho: TFDQuery;
-    QryCarrinhoItens: TFDQuery;
+    QryCarrinhoItem: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
       { Private declarations }
@@ -32,6 +32,8 @@ type
     procedure LimparCarrinhoLocal;
     procedure AdicionarCarrinhoLocal(Id_mercado: Integer; Nome_mercado, Endereco_mercado: string; Taxa_entrega: Double);
     procedure AdicionarItemCarrinhoLocal(Id_produto: integer; url_foto, nome, unidade : string; qtd, valor_unitario : double);
+    procedure ListarCarrinhoLocal;
+    procedure ListarItemCarrinhoLocal;
   end;
 
 var
@@ -198,7 +200,7 @@ begin
         ParamByName('ID_MERCADO').Value :=  Id_mercado;
         ParamByName('NOME_MERCADO').Value := Nome_mercado;
         ParamByName('ENDERECO_MERCADO').Value := Endereco_mercado;
-        ParamByName('TAXA_ENTREGA').Value := roundto(Taxa_entrega,  -2);
+        ParamByName('TAXA_ENTREGA').Value := roundto(Taxa_entrega, -2);
         ExecSQL;
       end;
   end;
@@ -209,10 +211,10 @@ procedure TDmMercado.ListarCarrinhoLocal;
 begin
   with QryCarrinho do
   begin
-      Active := False;
+      Active := false;
       SQL.Clear;
       SQL.Add('SELECT * FROM TAB_CARRINHO');
-      Active := True;
+      Active := true;
   end;
 end;
 

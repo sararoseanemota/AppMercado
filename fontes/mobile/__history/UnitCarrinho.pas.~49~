@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
-  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.ListBox, uFunctions;
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.ListBox, uFunctions, uLoading;
 
 type
   TFrmCarrinho = class(TForm)
@@ -15,7 +15,7 @@ type
     lytEndereco: TLayout;
     lblNome: TLabel;
     lblEndereco: TLabel;
-    btnBuscar: TButton;
+    btnFinalizarPedido: TButton;
     rctngl: TRectangle;
     lytSubTotal: TLayout;
     lblSubTotal: TLabel;
@@ -29,12 +29,16 @@ type
     lblEndEntrega1: TLabel;
     lblEndEntrega: TLabel;
     lbProdutos: TListBox;
+    ln1: TLine;
     procedure FormShow(Sender: TObject);
+    procedure imgVoltarClick(Sender: TObject);
+    procedure btnFinalizarPedidoClick(Sender: TObject);
   private
     procedure AddProduto(id_produto: integer; descricao, url_foto: string;
                                  qtd, valor_unit : double);
     procedure CarregarCarrinho;
     procedure DownloadFoto(lb: TListBox);
+    procedure ThreadPedidoTerminate(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -63,7 +67,7 @@ begin
   begin
     for i := 0 to lb.Items.Count - 1 do
     begin
-      Sleep(500);
+      //Sleep(500);
       frame := TFrameProdutoLista(lb.ItemByIndex(i).Components[0]); //metodo para procurar pelo index o objeto
 
       if frame.imgFoto.TagString <>  '' then
@@ -74,7 +78,7 @@ begin
   t.Start; //iniciar a thread
 end;
 
-//rotina
+//rotina adicionar produtos
 procedure TFrmCarrinho.AddProduto(id_produto: integer; descricao, url_foto: string;
                                  qtd, valor_unit : double);
 var
@@ -89,7 +93,7 @@ begin
 
   //frame
   frame := TFrameProdutoLista.Create(item);
-  //frame.imgFoto.bitmap :=
+  frame.imgFoto.TagString := url_foto;
   frame.lblDescricao.text := descricao;
   frame.lblQtd.text := qtd.ToString + ' x ' + FormatFloat('R$#,##0.00', valor_unit);
   frame.lblValor.text := FormatFloat('R$#,##0.00', qtd * valor_unit);
@@ -98,6 +102,38 @@ begin
 
   //adicionando itens na lista de produtos
   lbProdutos.AddObject(item);
+end;
+
+procedure TFrmCarrinho.ThreadPedidoTerminate(Sender: TObject);
+begin
+  TLoading.Hide;
+
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+        ShowMessage(Exception(TThread(sender).FatalException).Message);
+        Exit;
+    end;
+  end;
+
+  DmMercado.LimparCarrinhoLocal;
+  Close;
+
+end;
+
+//finalizar pedido
+procedure TFrmCarrinho.btnFinalizarPedidoClick(Sender: TObject);
+var t : tthread;
+begin
+  Tloading.Show(FrmCarrinho, '');
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+
+  end);
+  t.OnTerminate := ThreadPedidoTerminate;
+  t.Start;
+
 end;
 
 //inserindo produtos
@@ -124,6 +160,7 @@ begin
 
     //itens do carrinho
     subtotal := 0;
+    lbProdutos.Items.Clear;
     with DmMercado.QryCarrinhoItem do
     begin
       while NOT EOF do
@@ -143,6 +180,9 @@ begin
     lblSubTotalValor.Text := FormatFloat('R$ #,##0.00', subtotal);
     lblTotalValor.Text := FormatFloat('R$ #,##0.00', subtotal + lblTaxaEntrega.TagFloat);
 
+    //carrega as imagens
+    DownloadFoto(lbProdutos);
+
   except on ex:exception do
     ShowMessage('Erro ao carregar carrinho:' + ex.Message);
   end;
@@ -153,6 +193,11 @@ end;
 procedure TFrmCarrinho.FormShow(Sender: TObject);
 begin
   CarregarCarrinho;
+end;
+
+procedure TFrmCarrinho.imgVoltarClick(Sender: TObject);
+begin
+  Close;
 end;
 
 end.

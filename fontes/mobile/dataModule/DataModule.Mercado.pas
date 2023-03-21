@@ -7,7 +7,7 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
   RESTRequest4D, DataSet.Serialize.Config, uConsts, FireDAC.Stan.Async,
-  FireDAC.DApt, Math;
+  FireDAC.DApt, Math, system.JSON;
 
 type
   TDmMercado = class(TDataModule)
@@ -20,6 +20,7 @@ type
     QryCarrinhoItem: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
+    function JsonPedido: TJsonObject;
       { Private declarations }
   public
     { Public declarations }
@@ -239,6 +240,7 @@ begin
 
 end;
 
+//listar item no carrinho
 procedure TDmMercado.ListarItemCarrinhoLocal;
 begin
   with QryCarrinhoItem do
@@ -248,6 +250,11 @@ begin
       SQL.Add('SELECT * FROM TAB_CARRINHO_ITEM');
       Active := True;
   end;
+end;
+
+function TDmMercado.JsonPedido : TJsonObject;
+begin
+
 end;
 
 end.

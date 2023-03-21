@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
-  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.ListBox, uFunctions;
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.ListBox, uFunctions,
+  System.JSON,uLoading;
 
 type
   TFrmCarrinho = class(TForm)
@@ -15,7 +16,7 @@ type
     lytEndereco: TLayout;
     lblNome: TLabel;
     lblEndereco: TLabel;
-    btnBuscar: TButton;
+    btnFinalizarPedido: TButton;
     rctngl: TRectangle;
     lytSubTotal: TLayout;
     lblSubTotal: TLabel;
@@ -32,11 +33,13 @@ type
     ln1: TLine;
     procedure FormShow(Sender: TObject);
     procedure imgVoltarClick(Sender: TObject);
+    procedure btnFinalizarPedidoClick(Sender: TObject);
   private
     procedure AddProduto(id_produto: integer; descricao, url_foto: string;
                                  qtd, valor_unit : double);
     procedure CarregarCarrinho;
     procedure DownloadFoto(lb: TListBox);
+    procedure ThreadPedidoTerminate(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -100,6 +103,42 @@ begin
 
   //adicionando itens na lista de produtos
   lbProdutos.AddObject(item);
+end;
+
+procedure TFrmCarrinho.ThreadPedidoTerminate(Sender: TObject);
+begin
+  TLoading.Hide;
+
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+        ShowMessage(Exception(TThread(sender).FatalException).Message);
+        Exit;
+    end;
+  end;
+
+  DmMercado.LimparCarrinhoLocal;
+  Close;
+
+end;
+
+//finalizar pedido
+procedure TFrmCarrinho.btnFinalizarPedidoClick(Sender: TObject);
+var
+  t : tthread;
+  jsonPedido : TjsonObject;
+  arrayItem : TJSONArray;
+
+begin
+  Tloading.Show(FrmCarrinho, '');
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+    jsonPedido := DmMercado.JsonPedido;
+  end);
+  t.OnTerminate := ThreadPedidoTerminate;
+  t.Start;
+
 end;
 
 //inserindo produtos
