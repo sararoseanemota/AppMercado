@@ -12,15 +12,19 @@ uses
   UnitCarrinho in 'UnitCarrinho.pas' {FrmCarrinho},
   Fram.ProdutoLista in 'frames\Fram.ProdutoLista.pas' {FrameProdutoLista: TFrame},
   UnitPedido in 'UnitPedido.pas' {FrmPedidos},
-  UnitPedidoDetalhe in 'UnitPedidoDetalhe.pas' {Form1};
+  UnitPedidoDetalhe in 'UnitPedidoDetalhe.pas' {FrmPedidoDetalhe},
+  DataModule.Usuario in 'dataModule\DataModule.Usuario.pas' {DmUsuario: TDataModule},
+  uLoading in 'Units\uLoading.pas',
+  DataModule.Mercado in 'dataModule\DataModule.Mercado.pas' {DmMercado: TDataModule},
+  uConsts in 'Units\uConsts.pas',
+  uFunctions in 'Units\uFunctions.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TFrmPrincipal, FrmPrincipal);
-  Application.CreateForm(TFrmCarrinho, FrmCarrinho);
-  Application.CreateForm(TFrmPedidos, FrmPedidos);
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TDmUsuario, DmUsuario);
+  Application.CreateForm(TDmMercado, DmMercado);
+  Application.CreateForm(TFrmLogin, FrmLogin);
   Application.Run;
 end.

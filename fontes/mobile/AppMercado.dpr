@@ -17,7 +17,8 @@ uses
   uLoading in 'Units\uLoading.pas',
   DataModule.Mercado in 'dataModule\DataModule.Mercado.pas' {DmMercado: TDataModule},
   uConsts in 'Units\uConsts.pas',
-  uFunctions in 'Units\uFunctions.pas';
+  uFunctions in 'Units\uFunctions.pas',
+  UnitInstala in '..\..\..\AppMonitorInstalador\fontes\mobile\UnitInstala.pas' {FrmInstala};
 
 {$R *.res}
 
@@ -26,5 +27,6 @@ begin
   Application.CreateForm(TDmUsuario, DmUsuario);
   Application.CreateForm(TDmMercado, DmMercado);
   Application.CreateForm(TFrmLogin, FrmLogin);
+  Application.CreateForm(TFrmInstala, FrmInstala);
   Application.Run;
 end.
