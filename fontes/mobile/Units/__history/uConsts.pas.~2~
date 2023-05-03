@@ -2,7 +2,7 @@ unit uConsts;
 
 interface
 const
-    USER_NAME ='meu_mercado';
+    USER_NAME = 'nutrifit';
     PASSWORD = '123456';
     BASE_URL = 'http://localhost:3000';
 
