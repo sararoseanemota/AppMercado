@@ -78,7 +78,7 @@ begin
 
   t := TThread.CreateAnonymousThread(procedure
   begin
-    DmUsuario.ListarPedido();
+    //DmUsuario.ListarPedido();
   end);
 
   t.OnTerminate := ThreadDadosTerminate; //rotina de erro

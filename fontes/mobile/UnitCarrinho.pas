@@ -32,7 +32,7 @@ type
     lbProdutos: TListBox;
     ln1: TLine;
     procedure FormShow(Sender: TObject);
-    procedure imgVoltarClick(Sender: TObject);
+//    procedure imgVoltarClick(Sender: TObject);
     procedure btnFinalizarPedidoClick(Sender: TObject);
   private
     { Private declarations }
@@ -111,7 +111,45 @@ begin
   lbProdutos.AddObject(item);
 end;
 
+//<<<<<<< Updated upstream
 {inserindo produtos}
+procedure TFrmCarrinho.ThreadPedidoTerminate(Sender: TObject);
+begin
+  TLoading.Hide;
+
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+        ShowMessage(Exception(TThread(sender).FatalException).Message);
+        Exit;
+    end;
+  end;
+
+  DmMercado.LimparCarrinhoLocal;
+  Close;
+
+end;
+
+//finalizar pedido
+procedure TFrmCarrinho.btnFinalizarPedidoClick(Sender: TObject);
+var
+  t : tthread;
+  jsonPedido : TjsonObject;
+  arrayItem : TJSONArray;
+
+begin
+  Tloading.Show(FrmCarrinho, '');
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+    //jsonPedido := DmMercado.JsonPedido;
+  end);
+  t.OnTerminate := ThreadPedidoTerminate;
+  t.Start;
+
+end;
+
+//inserindo produtos
 procedure TFrmCarrinho.CarregarCarrinho;
 var
   subtotal: double;
@@ -167,53 +205,53 @@ begin
 end;
 
 {finalizar pedido}
-procedure TFrmCarrinho.btnFinalizarPedidoClick(Sender: TObject);
-var
-  t : tthread;
-  jsonPedido : TjsonObject;
-  arrayItem : TJSONArray;
-begin
-  Tloading.Show(FrmCarrinho, '');
-
-  t := TThread.CreateAnonymousThread(procedure
-  begin
-    try
-      jsonPedido := DmMercado.JsonPedido(lblSubTotalValor.TagFloat, lblTaxaEntrega.TagFloat, lblTotalValor.TagFloat);
-      jsonPedido.AddPair('itens', DmMercado.JsonPedidoItem);
-
-      DmMercado.InserirPedido(jsonPedido);
-    finally
-      jsonPedido.DisposeOf;
-    end;
-  end);
-
-  t.OnTerminate := ThreadPedidoTerminate;
-  t.Start;
-end;
+//procedure TFrmCarrinho.btnFinalizarPedidoClick(Sender: TObject);
+//var
+//  t : tthread;
+//  jsonPedido : TjsonObject;
+//  arrayItem : TJSONArray;
+//begin
+//  Tloading.Show(FrmCarrinho, '');
+//
+//  t := TThread.CreateAnonymousThread(procedure
+//  begin
+//    try
+//      jsonPedido := DmMercado.JsonPedido(lblSubTotalValor.TagFloat, lblTaxaEntrega.TagFloat, lblTotalValor.TagFloat);
+//      jsonPedido.AddPair('itens', DmMercado.JsonPedidoItem);
+//
+//      DmMercado.InserirPedido(jsonPedido);
+//    finally
+//      jsonPedido.DisposeOf;
+//    end;
+//  end);
+//
+//  t.OnTerminate := ThreadPedidoTerminate;
+//  t.Start;
+//end;
 
 {voltar tela}
-procedure TFrmCarrinho.imgVoltarClick(Sender: TObject);
-begin
-  Close;
-end;
+//procedure TFrmCarrinho.imgVoltarClick(Sender: TObject);
+//begin
+//  Close;
+//end;
 
 {thread}
-procedure TFrmCarrinho.ThreadPedidoTerminate(Sender: TObject);
-begin
-  TLoading.Hide;
-
-  if Sender is TThread then
-  begin
-    if Assigned(TThread(Sender).FatalException) then
-    begin
-        ShowMessage(Exception(TThread(sender).FatalException).Message);
-        Exit;
-    end;
-  end;
+//procedure TFrmCarrinho.ThreadPedidoTerminate(Sender: TObject);
+//begin
+//  TLoading.Hide;
+//
+//  if Sender is TThread then
+//  begin
+//    if Assigned(TThread(Sender).FatalException) then
+//    begin
+//        ShowMessage(Exception(TThread(sender).FatalException).Message);
+//        Exit;
+//    end;
+//  end;
 
   //limpar carrinho e fechar a tela
-  DmMercado.LimparCarrinhoLocal;
-  Close;
-end;
+//  DmMercado.LimparCarrinhoLocal;
+//  Close;
+//end;
 
 end.
