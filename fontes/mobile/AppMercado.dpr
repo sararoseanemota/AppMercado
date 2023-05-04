@@ -27,6 +27,5 @@ begin
   Application.CreateForm(TDmUsuario, DmUsuario);
   Application.CreateForm(TDmMercado, DmMercado);
   Application.CreateForm(TFrmLogin, FrmLogin);
-  Application.CreateForm(TFrmInstala, FrmInstala);
   Application.Run;
 end.

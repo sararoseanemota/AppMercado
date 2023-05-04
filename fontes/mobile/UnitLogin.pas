@@ -61,8 +61,10 @@ type
     procedure lblConta2Click(Sender: TObject);
     procedure btnCriarContaClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     procedure ThreadLoginTerminate(Sender: TObject);
+    procedure ThreadShowTerminate(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -78,72 +80,92 @@ implementation
 uses
   DataModule.Usuario, UnitPrincipal;
 
-//show
-procedure TFrmLogin.FormShow(Sender: TObject);
+{close}
+procedure TFrmLogin.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
- try
-    DmUsuario.ListarUsuarioLocal;
-
-    if DmUsuario.QryUsuario.RecordCount > 0 then
-    begin
-      //Abrir o form Principal...
-     if NOT Assigned(FrmPrincipal) then
-         Application.CreateForm(TFrmPrincipal, FrmPrincipal); //classe e variavel
-
-      Application.MainForm := FrmPrincipal; //definir form principal
-      FrmPrincipal.Show; //abrir o form
-      FrmLogin.Close; // fechar o form login
-    end;
- except on ex:Exception do
-    ShowMessage(ex.Message);
- end;
+  Action:= TCloseAction.caFree;
+  FrmLogin := nil;
 end;
 
-//voltar na tela de cadastro e login
-procedure TFrmLogin.btnProximoClick(Sender: TObject);
+{thread terminate show}
+procedure TFrmLogin.ThreadShowTerminate(Sender: TObject);
 begin
-  TabControl.GotoVisibleTab(2);
-end;
-
-procedure TFrmLogin.lblConta2Click(Sender: TObject);
-begin
-  TabControl.GotoVisibleTab(0);
-end;
-
-procedure TFrmLogin.lblCrieAgoraClick(Sender: TObject);
-begin
-  tabcontrol.GotoVisibleTab(1);
-end;
-
-procedure TFrmLogin.lblLoginClick(Sender: TObject);
-begin
-  TabControl.GotoVisibleTab(0);
-end;
-
-//thread
-procedure TFrmLogin.ThreadLoginTerminate(Sender: TObject);
-begin
-  TLoading.Hide; //parar de exibir a bolinha executando
-
+  TLoading.Hide;
   if Sender is TThread then
   begin
     if Assigned(TThread(Sender).FatalException) then
     begin
-        ShowMessage(Exception(TThread(sender).FatalException).Message);
-        Exit;
+      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      Exit;
     end;
   end;
 
-  //Abrir o form Principal...
-  if NOT Assigned(FrmPrincipal) then
-      Application.CreateForm(TFrmPrincipal, FrmPrincipal); //classe e variavel
+  if DmUsuario.QryUsuario.RecordCount > 0 then
+  begin
+    {Abrir o form Principal}
+    if NOT Assigned(FrmPrincipal) then
+         Application.CreateForm(TFrmPrincipal, FrmPrincipal); //classe e variavel
 
-  Application.MainForm := FrmPrincipal; //definir form principal
-  FrmPrincipal.Show; //abrir o form
-  FrmLogin.Close; // fechar o form login
+    Application.MainForm := FrmPrincipal; //definir form principal
+    FrmPrincipal.lblNome.Text := DmUsuario.QryUsuario.FieldByName('nome').AsString;
+    FrmPrincipal.lblEmail.Text := DmUsuario.QryUsuario.FieldByName('email').AsString;
+    FrmPrincipal.Show; //abrir o form
+    FrmLogin.Close; // fechar o form loginend;
+  end;
 end;
 
-//criar conta
+{show}
+procedure TFrmLogin.FormShow(Sender: TObject);
+var
+  t: TThread;
+begin
+  TLoading.Show(FrmLogin, '');
+
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+    DmUsuario.ListarUsuarioLocal;
+  end);
+
+  t.OnTerminate := ThreadShowTerminate; //rotina de erro
+  t.Start;
+end;
+
+{login}
+procedure TFrmLogin.btnLoginClick(Sender: TObject);
+var
+  t : TThread;
+begin
+  TLoading.Show(FrmLogin, '');
+
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+    Sleep(1500); //teste do loading
+    DmUsuario.Login(edtEmail.Text, edtSenha.Text);
+
+    {salvar dados no banco do aparelho}
+    with DmUsuario.TabUsuario do
+    begin
+      if RecordCount > 0 then
+      begin
+        DmUsuario.SalvarUsuarioLocal(FieldByName('id_usuario').AsInteger,
+                                     FieldByName('email').AsString,
+                                     FieldByName('nome').AsString,
+                                     FieldByName('endereco').AsString,
+                                     FieldByName('bairro').AsString,
+                                     FieldByName('cidade').AsString,
+                                     FieldByName('uf').AsString,
+                                     FieldByName('cep').AsString);
+      end;
+
+    end;
+
+  end);
+
+  t.OnTerminate := ThreadLoginTerminate; //rotina de erro
+  t.Start;
+end;
+
+{criar conta}
 procedure TFrmLogin.btnCriarContaClick(Sender: TObject);
 var
   t : TThread;
@@ -178,39 +200,55 @@ begin
   t.Start;
 end;
 
-//login
-procedure TFrmLogin.btnLoginClick(Sender: TObject);
-var
-  t : TThread;
+{voltar na tela de cadastro e login}
+procedure TFrmLogin.btnProximoClick(Sender: TObject);
 begin
-  TLoading.Show(FrmLogin, '');
-
-  t := TThread.CreateAnonymousThread(procedure
-  begin
-    //Sleep(1500); //teste do loading
-    DmUsuario.Login(edtEmail.Text, edtSenha.Text);
-
-    //salvar dados no banco do aparelho
-    with DmUsuario.TabUsuario do
-    begin
-      if RecordCount > 0 then
-      begin
-        DmUsuario.SalvarUsuarioLocal(FieldByName('id_usuario').AsInteger,
-                                     FieldByName('email').AsString,
-                                     FieldByName('nome').AsString,
-                                     FieldByName('endereco').AsString,
-                                     FieldByName('bairro').AsString,
-                                     FieldByName('cidade').AsString,
-                                     FieldByName('uf').AsString,
-                                     FieldByName('cep').AsString);
-      end;
-
-    end;
-
-  end);
-
-  t.OnTerminate := ThreadLoginTerminate; //rotina de erro
-  t.Start;
+  TabControl.GotoVisibleTab(2);
 end;
 
+procedure TFrmLogin.lblConta2Click(Sender: TObject);
+begin
+  TabControl.GotoVisibleTab(0);
+end;
+
+procedure TFrmLogin.lblCrieAgoraClick(Sender: TObject);
+begin
+  tabcontrol.GotoVisibleTab(1);
+end;
+
+procedure TFrmLogin.lblLoginClick(Sender: TObject);
+begin
+  TabControl.GotoVisibleTab(0);
+end;
+
+{thread}
+procedure TFrmLogin.ThreadLoginTerminate(Sender: TObject);
+begin
+  TLoading.Hide; //parar de exibir a bolinha executando
+
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+        ShowMessage(Exception(TThread(sender).FatalException).Message);
+        Exit;
+    end;
+  end;
+
+  {Abrir o form Principal}
+  if NOT Assigned(FrmPrincipal) then
+      Application.CreateForm(TFrmPrincipal, FrmPrincipal); //classe e variavel
+
+  try
+    DmUsuario.ListarUsuarioLocal;
+  except
+  end;
+
+
+  Application.MainForm := FrmPrincipal; //definir form principal
+  FrmPrincipal.Show; //abrir o form
+  FrmPrincipal.lblNome.Text := DmUsuario.QryUsuario.FieldByName('nome').AsString;
+  FrmPrincipal.lblEmail.Text := DmUsuario.QryUsuario.FieldByName('email').AsString;
+  FrmLogin.Close; // fechar o form login
+end;
 end.

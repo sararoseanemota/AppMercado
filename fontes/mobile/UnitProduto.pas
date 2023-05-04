@@ -93,18 +93,18 @@ begin
                   [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo],
                   TMsgDlgBtn.mbNo,
                   0,
-       procedure(const AResult : TModalResult)
+     procedure(const AResult : TModalResult)
+     begin
+       if AResult = mrYes then
        begin
-         if AResult = mrYes then
-         begin
-          //rotina
-          DmMercado.LimparCarrinhoLocal;
-          DmMercado.AdicionarCarrinhoLocal(Id_mercado, Nome_mercado, Endereco_mercado, Taxa_entrega);
-          DmMercado.AdicionarItemCarrinhoLocal(Id_produto, imgFoto.TagString, lblNome.Text,
-                                          lblUnidade.Text, lblQtd.Tag,lblValor.TagFloat);
+        //rotina
+        DmMercado.LimparCarrinhoLocal;
+        DmMercado.AdicionarCarrinhoLocal(Id_mercado, Nome_mercado, Endereco_mercado, Taxa_entrega);
+        DmMercado.AdicionarItemCarrinhoLocal(Id_produto, imgFoto.TagString, lblNome.Text,
+                                            lblUnidade.Text, lblQtd.Tag,lblValor.TagFloat);
 
-         end;
-       end);
+       end;
+     end);
 
   end
   else
@@ -116,7 +116,6 @@ begin
   end;
 
   Close;
-
 end;
 
 //carregar dados
