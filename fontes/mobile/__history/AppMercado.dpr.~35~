@@ -14,16 +14,18 @@ uses
   UnitPedido in 'UnitPedido.pas' {FrmPedidos},
   UnitPedidoDetalhe in 'UnitPedidoDetalhe.pas' {FrmPedidoDetalhe},
   DataModule.Usuario in 'dataModule\DataModule.Usuario.pas' {DmUsuario: TDataModule},
-  uLoading in 'Units\uLoading.pas';
+  uLoading in 'Units\uLoading.pas',
+  DataModule.Mercado in 'dataModule\DataModule.Mercado.pas' {DmMercado: TDataModule},
+  uConsts in 'Units\uConsts.pas',
+  uFunctions in 'Units\uFunctions.pas',
+  UnitInstala in '..\..\..\AppMonitorInstalador\fontes\mobile\UnitInstala.pas' {FrmInstala};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TFrmPrincipal, FrmPrincipal);
-  Application.CreateForm(TFrmCarrinho, FrmCarrinho);
-  Application.CreateForm(TFrmPedidos, FrmPedidos);
-  Application.CreateForm(TFrmPedidoDetalhe, FrmPedidoDetalhe);
   Application.CreateForm(TDmUsuario, DmUsuario);
+  Application.CreateForm(TDmMercado, DmMercado);
+  Application.CreateForm(TFrmLogin, FrmLogin);
   Application.Run;
 end.

@@ -206,7 +206,14 @@ end;
 
 procedure TFrmPrincipal.OpenMenu(ind : Boolean);
 begin
+<<<<<<< Updated upstream
   rectMenu.Visible := ind;
+=======
+  if rectMenu.Tag = 0 then
+     rectMenu.Visible := True;
+
+  AnimationMenu.Start;
+>>>>>>> Stashed changes
 end;
 
 procedure TFrmPrincipal.rctMeusPedidosClick(Sender: TObject);
