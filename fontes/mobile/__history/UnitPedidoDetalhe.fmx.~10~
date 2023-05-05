@@ -1,0 +1,320 @@
+object FrmPedidoDetalhe: TFrmPedidoDetalhe
+  Left = 0
+  Top = 0
+  Caption = 'Detalhes do Pedido'
+  ClientHeight = 515
+  ClientWidth = 310
+  Fill.Kind = Solid
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object lytEndereco: TLayout
+    Align = Top
+    Position.Y = 50.000000000000000000
+    Size.Width = 310.000000000000000000
+    Size.Height = 63.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object lblMercado: TLabel
+      Align = Top
+      StyledSettings = [Family]
+      Margins.Left = 15.000000000000000000
+      Margins.Right = 15.000000000000000000
+      Position.X = 15.000000000000000000
+      Size.Width = 280.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Size = 16.000000000000000000
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      TextSettings.FontColor = xFF747474
+      Text = 'P'#227'o de A'#231#250'car'
+      TabOrder = 1
+    end
+    object lblEnderecoMercado: TLabel
+      Align = Top
+      StyledSettings = [Family]
+      Margins.Left = 15.000000000000000000
+      Margins.Right = 15.000000000000000000
+      Position.X = 15.000000000000000000
+      Position.Y = 33.000000000000000000
+      Size.Width = 280.000000000000000000
+      Size.Height = 16.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Size = 14.000000000000000000
+      TextSettings.FontColor = xFF747474
+      Text = 'SCEE / Sul Lote B - Guar'#225
+      TabOrder = 0
+    end
+  end
+  object lytToolBar: TLayout
+    Align = Top
+    Size.Width = 310.000000000000000000
+    Size.Height = 50.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object lblTitulo: TLabel
+      Align = Contents
+      StyledSettings = [Family]
+      Size.Width = 310.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Size = 20.000000000000000000
+      TextSettings.Font.StyleExt = {00060000000000000004000000}
+      TextSettings.FontColor = xFF565656
+      TextSettings.HorzAlign = Center
+      Text = 'Pedido #654285'
+      TabOrder = 0
+    end
+    object imgVoltar: TImage
+      MultiResBitmap.Height = 40
+      MultiResBitmap.Width = 40
+      MultiResBitmap = <
+        item
+          Width = 40
+          Height = 40
+          PNG = {
+            89504E470D0A1A0A0000000D49484452000000280000002808060000008CFEB8
+            6D000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+            057B494441545847ED977F4C556518C79FE77DCF3DE772F12290582A49049696
+            B524D74C5AD4E615688ECC45E9886AADEC9F743A57CBD5C6586B6EB5D5AAF547
+            CC556668C64A734E0DCDBACDAC39A93519B20441C910072872EF85F3EB7D7BCE
+            BD67487F70B9172ED51F7CFE39F7BCCFF9F1BDEFF33EDFF73930CD34FF31E81E
+            A7949AFDAB7C435EBB00A59565D9BC77D0523AEB2A0E44DC705CB87B9C1A24E0
+            CB4B2AFC669A5922A55C8B12CA6930DFABD8E17915455D2D0D2DD2BD724CA64C
+            60E59795BCA27B4E1632590252BE4EA92A07C4C568E0DDA8089FC2AF1E3BB5EB
+            C2B07BF99830F798526A640D2BCCEE9B45E95C336CC20E30F13E1297160D22F8
+            40B2DC74EF8C9BA3E7E3907281351258E4C84F05A6A56C14366C03CDF083767D
+            AD4B8F1C96287BA46D5F7287E2925281EB3FBAD713395C5A2C6DFE9A04EB055B
+            31B23450AFBF43CA215A97476D89DB67A846BF3B1A979455B153A961D5286788
+            4FD9601673F0E4B8A118065C961EDC2BA4FCC290F8EB078F1CBEE646E2921281
+            9B0FAFCC5618AE9142AE350D5CAA6930D30D4511006D28E5D7F4B2AFCC816BA7
+            DF7DF2972137342E9312E81443A8F1441E435641A9AB360CB85353C1EB8641D7
+            C1D234D12224EE2691FB42B3FADAEB9636996E3821262C70C3C1324DE5F6025A
+            608FD3527E8EE4CC45D0A2B625755A6D4C8641816664B8238256C38781EFFAA2
+            372649F202C97CB734067C1EC6EF10967C5E37E5D39A86D7670D7481C007141B
+            4F49E4EF0DE6F436263B6BA3495620D69C5A9516BE622E0761BFC28007DCF128
+            3A1842139E6B64CE8D34B36F6C2B3DD2EC86264C5236B3E5DB802FD26F3E2A05
+            BCC90CFE903B3C820AD84329DD8E4CDDDA369079C61D9E1409CFE0A643A573C8
+            D19EB5C1AEB2745E40953A925607B28FD364319F32A6ECD394D085DA8783961B
+            9A140909A4994B67C036D3CF2AD4A18076064F2C42D0762FD03E82083B6DC17E
+            F06B7A77AAC439249AE2D9E463F71B3A14FE431CE836795F33137C3B4779F09D
+            D2C63F5329CE2121810A93B43B2103551FF37A63C89AB065C523A176AB68DD6D
+            C30A97795CF25C6A9732C8DFDCFB68FF60389B529CC9B82754DC91DF1BB8B53A
+            1C0C06C7EDF31225218127EBDBEC9267F25A0570865CCCD375F42B0AC9744160
+            0574C8A74666C8B8A9BB67E5EA7B86820D2D762C3A39126E588F7FD6117E70FD
+            C26669422FE5723EB36036DD3D723F22CE0130972047BFC5231D2BEAABFB83B5
+            939FC984053A1CFFF8ACBEA2ABB85560A85582CC2551CECC8D608095AE08BE88
+            44CE333A7A7E3FB1F36C422D553C26B4B09DD62AC4F4BB98822F01EA95085ECD
+            0D45B73AD0B541D5034DF4F0B7AE5EE83D56F7E2BFB7D58D50F37D89371C5617
+            520E1E630CAAC0C0F9A0E2880559A04714547F1302EA2D89FB66962DEBA9C55A
+            6A6A9223A9148F26B8E3BC15A8AFBE6C9CEBEA442107A89A6FD44DCC5678AC78
+            18281E2AA6B91E45E62179946CEFBAB4B1A268A021812FB9D1A4C4BBB6FE5896
+            630E8BD54C8A7574BA94FEB73F1689610B384346BE174CF8C6BC811AD6E58937
+            AC139EC1D11CFFA42DB2B832B355E3E9832031839A894C9AD1196E181882D3FE
+            2F920C7D8AEEBD5254B5A09FAC4B8F45E39312810E4DBBBBCDC59B32FFD04269
+            9D242E1D4DC8058EE96ED8F1219FB4E076E432875EFA57A0B0BD33187476F2F8
+            A44CA043535DB708D49FBB6876E4B7384FA6C66289B4D1834A6C292107559A58
+            085C6418F30B0EFCFCF9B971AB3BA97E30116A11842F50DC6E0AF63E3564AF4A
+            55F6E992ACC70555F050E793CD15768B3B1497940B7470ECE4E260C6656EB13D
+            20D87A2FA827A3DFC484633FB44E2FE96CF862F4E2714849158F097DBF6C3854
+            E6D798584E2F2A07947924EEBCCDC4C1AEAB59471B9E681877BF9E5A812E9BF7
+            2C4B6399FE0232C86C6A16FB597ADAF9B71FD83FE886A799E67F0CC0DF696D22
+            4083BF7A7B0000000049454E44AE426082}
+          FileName = 'D:\AppMercado\fontes\mobile\images\voltar.png'
+        end
+        item
+          Scale = 2.000000000000000000
+        end>
+      Align = Left
+      Margins.Left = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Position.X = 5.000000000000000000
+      Size.Width = 33.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+  object rctngl: TRectangle
+    Align = Bottom
+    Fill.Color = claWhite
+    Position.Y = 354.000000000000000000
+    Sides = [Top]
+    Size.Width = 310.000000000000000000
+    Size.Height = 161.000000000000000000
+    Size.PlatformDefault = False
+    Stroke.Color = claSilver
+    object lytSubTotal: TLayout
+      Align = Top
+      Size.Width = 310.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      object lblSubTotal: TLabel
+        Align = Left
+        StyledSettings = [Family]
+        Margins.Left = 10.000000000000000000
+        Margins.Right = 15.000000000000000000
+        Position.X = 10.000000000000000000
+        Size.Width = 103.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 14.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = xFF747474
+        Text = 'Sub-Total'
+        TabOrder = 1
+      end
+      object lblSubTotalValor: TLabel
+        Align = Right
+        StyledSettings = [Family]
+        Margins.Left = 10.000000000000000000
+        Margins.Right = 15.000000000000000000
+        Position.X = 192.000000000000000000
+        Size.Width = 103.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 14.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = xFF747474
+        TextSettings.HorzAlign = Trailing
+        Text = 'R$50,00'
+        TabOrder = 0
+      end
+    end
+    object lytTaxa: TLayout
+      Align = Top
+      Position.Y = 25.000000000000000000
+      Size.Width = 310.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object lblTaxaValor: TLabel
+        Align = Left
+        StyledSettings = [Family]
+        Margins.Left = 10.000000000000000000
+        Margins.Right = 15.000000000000000000
+        Position.X = 10.000000000000000000
+        Size.Width = 207.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 14.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = xFF747474
+        Text = 'Taxa de Entrega'
+        TabOrder = 1
+      end
+      object lblTaxa: TLabel
+        Align = Right
+        StyledSettings = [Family]
+        Margins.Left = 10.000000000000000000
+        Margins.Right = 15.000000000000000000
+        Position.X = 192.000000000000000000
+        Size.Width = 103.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 14.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = xFF747474
+        TextSettings.HorzAlign = Trailing
+        Text = 'R$5,00'
+        TabOrder = 0
+      end
+    end
+    object lytTotal: TLayout
+      Align = Top
+      Position.Y = 50.000000000000000000
+      Size.Width = 310.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object lblTotal: TLabel
+        Align = Left
+        StyledSettings = [Family]
+        Margins.Left = 10.000000000000000000
+        Margins.Right = 15.000000000000000000
+        Position.X = 10.000000000000000000
+        Size.Width = 103.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 14.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = xFF747474
+        Text = 'Valor Total'
+        TabOrder = 1
+      end
+      object lblTotalValor: TLabel
+        Align = Right
+        StyledSettings = [Family]
+        Margins.Left = 10.000000000000000000
+        Margins.Right = 15.000000000000000000
+        Position.X = 233.000000000000000000
+        Size.Width = 62.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 14.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = xFF747474
+        TextSettings.HorzAlign = Trailing
+        Text = 'R$55,00'
+        TabOrder = 0
+      end
+    end
+    object rctnglEndereco: TRectangle
+      Align = Bottom
+      Fill.Kind = None
+      Position.Y = 80.000000000000000000
+      Sides = [Top]
+      Size.Width = 310.000000000000000000
+      Size.Height = 81.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Color = xFFB1B1B1
+      object lblEnderecoEntrega: TLabel
+        Align = Top
+        StyledSettings = [Family]
+        Margins.Left = 10.000000000000000000
+        Margins.Right = 15.000000000000000000
+        Position.X = 10.000000000000000000
+        Position.Y = 35.000000000000000000
+        Size.Width = 285.000000000000000000
+        Size.Height = 16.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.FontColor = xFF747474
+        Text = 'SCEE / Sul Lote B - Guar'#225
+        TabOrder = 0
+      end
+      object lblEndereco2: TLabel
+        Align = Top
+        StyledSettings = [Family]
+        Margins.Left = 10.000000000000000000
+        Margins.Top = 10.000000000000000000
+        Margins.Right = 10.000000000000000000
+        Position.X = 10.000000000000000000
+        Position.Y = 10.000000000000000000
+        Size.Width = 290.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 14.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = xFF747474
+        Text = 'Endere'#231'o de Entrega'
+        TabOrder = 2
+      end
+    end
+  end
+  object lbProdutos: TListBox
+    Align = Client
+    Size.Width = 310.000000000000000000
+    Size.Height = 241.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'transparentlistboxstyle'
+    TabOrder = 4
+    DisableFocusEffect = True
+    DefaultItemStyles.ItemStyle = ''
+    DefaultItemStyles.GroupHeaderStyle = ''
+    DefaultItemStyles.GroupFooterStyle = ''
+    Viewport.Width = 310.000000000000000000
+    Viewport.Height = 241.000000000000000000
+  end
+end

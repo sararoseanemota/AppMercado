@@ -5,13 +5,13 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
-  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.ListBox;
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.ListBox, uLoading, System.JSON;
 
 type
   TFrmPedidoDetalhe = class(TForm)
     lytEndereco: TLayout;
-    lblEndereco: TLabel;
-    lblEndereco1: TLabel;
+    lblMercado: TLabel;
+    lblEnderecoMercado: TLabel;
     lytToolBar: TLayout;
     lblTitulo: TLabel;
     imgVoltar: TImage;
@@ -26,17 +26,20 @@ type
     lblTotal: TLabel;
     lblTotalValor: TLabel;
     lblEndereco2: TLabel;
-    lblEndereco11: TLabel;
+    lblEnderecoEntrega: TLabel;
     lbProdutos: TListBox;
     rctnglEndereco: TRectangle;
     procedure FormShow(Sender: TObject);
   private
+    FId_pedido: integer;
     procedure AddProduto(id_produto: integer; descricao: string; qtd,
       valor_unit: double; foto: TStream);
     procedure CarregarPedido;
+    procedure ThreadDadosTerminate(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
+    property id_pedido: integer read FId_pedido write FId_pedido;
   end;
 
 var
@@ -45,7 +48,7 @@ var
 implementation
 
 uses
-  Fram.ProdutoLista;
+  Fram.ProdutoLista, DataModule.Usuario;
 
 {$R *.fmx}
 
@@ -73,13 +76,44 @@ begin
   lbProdutos.AddObject(item);
 end;
 
-//inserindo produtos
+{carregar os pedidos}
 procedure TFrmPedidoDetalhe.CarregarPedido;
+var
+  t : TThread;
+  jsonObj: TJSONObject;
 begin
-  AddProduto(0,'Melancia',1,8, nil);
-  AddProduto(1,'Melancia',1,4.5, nil);
-  AddProduto(2,'Melancia',1,3, nil);
-  AddProduto(3,'Melancia',1,9.99, nil);
+  TLoading.Show(FrmPedidoDetalhe, '');
+
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+    jsonObj := DmUsuario.JsonPedido(id_pedido);
+
+    //thread paralela para sicronizar
+    TThread.Synchronize(TThread.CurrentThread, procedure
+    begin
+      lblTitulo.Text := 'Pedido #' + jsonObj.GetValue<string>('id_pedido', '');
+      lblMercado.Text := jsonObj.GetValue<string>('nome_mercado', '');
+      lblEnderecoMercado.Text := jsonObj.GetValue<string>('endereco_mercado', '');
+    end);
+
+  t.OnTerminate := ThreadDadosTerminate; //rotina de erro
+  t.Start;
+end);
+end;
+
+{thread terminate dados}
+procedure TFrmPedidoDetalhe.ThreadDadosTerminate(Sender: TObject);
+begin
+  TLoading.Hide;
+
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      Exit;
+    end;
+  end;
 end;
 
 procedure TFrmPedidoDetalhe.FormShow(Sender: TObject);

@@ -17,7 +17,9 @@ uses
   uLoading in 'Units\uLoading.pas',
   DataModule.Mercado in 'dataModule\DataModule.Mercado.pas' {DmMercado: TDataModule},
   uConsts in 'Units\uConsts.pas',
-  uFunctions in 'Units\uFunctions.pas';
+  uFunctions in 'Units\uFunctions.pas',
+  UnitInstala in 'D:\AppMonitorInstalador\fontes\mobile\UnitInstala.pas' {FrmInstala},
+  uSession in 'Units\uSession.pas';
 
 {$R *.res}
 

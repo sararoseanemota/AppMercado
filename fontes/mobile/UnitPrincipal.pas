@@ -40,8 +40,9 @@ type
     lblMeusPedidos: TLabel;
     rctPerfil: TRectangle;
     lblPerfil: TLabel;
-    rctSair: TRectangle;
+    rctLogout: TRectangle;
     lblSair: TLabel;
+    AnimationMenu: TFloatAnimation;
     procedure FormShow(Sender: TObject);
     procedure lvMercadoItemClick(const Sender: TObject;
       const AItem: TListViewItem);
@@ -51,6 +52,9 @@ type
     procedure imgVoltarMenuClick(Sender: TObject);
     procedure rctMeusPedidosClick(Sender: TObject);
     procedure btnBuscarClick(Sender: TObject);
+    procedure rctLogoutClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure AnimationMenuFinish(Sender: TObject);
 
   private
      { Private declarations }
@@ -183,19 +187,29 @@ begin
 
 end;
 
-
 procedure TFrmPrincipal.btnBuscarClick(Sender: TObject);
 begin
   ListarMercados;
 end;
 
-//show
+{close}
+procedure TFrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+//  Action:= TCloseAction.caFree;
+//  FrmLogin := nil;
+end;
+
+{show}
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
+  rectMenu.tag := 0;
+  rectMenu.Margins.Right := rectMenu.Width + 50;
+  rectMenu.Visible := False;
+
   SelecionarEntrega(lblCasa);
 end;
 
-//clicando na imagem carrinho e carregando o form Carrinho
+{clicando na imagem carrinho e carregando o form Carrinho}
 procedure TFrmPrincipal.ImgCarrinhoClick(Sender: TObject);
 begin
   if not Assigned(FrmCarrinho) then
@@ -204,18 +218,48 @@ begin
   FrmCarrinho.Show;
 end;
 
+{menu}
 procedure TFrmPrincipal.OpenMenu(ind : Boolean);
 begin
-<<<<<<< Updated upstream
-  rectMenu.Visible := ind;
-=======
   if rectMenu.Tag = 0 then
      rectMenu.Visible := True;
 
+//animação da tela
+//  AnimationMenu.StartValue := rectMenu.Width + 50;
+//  AnimationMenu.StopValue := 0;
+
   AnimationMenu.Start;
->>>>>>> Stashed changes
 end;
 
+{finalizar animação do menu}
+procedure TFrmPrincipal.AnimationMenuFinish(Sender: TObject);
+begin
+  AnimationMenu.Inverse := not AnimationMenu.Inverse;
+
+  if rectMenu.Tag = 1 then
+  begin
+    rectMenu.Tag := 0;
+    rectMenu.Visible := False;
+  end
+  else
+    rectMenu.Tag := 1;
+end;
+
+{logout}
+procedure TFrmPrincipal.rctLogoutClick(Sender: TObject);
+begin
+  DmUsuario.Logout;
+
+  if not Assigned(FrmLogin) then
+    Application.CreateForm(TFrmLogin, FrmLogin);
+
+  Application.MainForm := FrmLogin;
+  FrmLogin.Show;
+  FrmPrincipal.Close;
+
+end;
+
+{meus pedidos}
 procedure TFrmPrincipal.rctMeusPedidosClick(Sender: TObject);
 begin
 // ao clicar no menu Meus Pedidos
@@ -230,12 +274,13 @@ begin
   OpenMenu(true);
 end;
 
+{voltar menu}
 procedure TFrmPrincipal.imgVoltarMenuClick(Sender: TObject);
 begin
   OpenMenu(false);
 end;
 
-//selecionar a entrega
+{selecionar a entrega}
 procedure TFrmPrincipal.SelecionarEntrega(lbl : Tlabel);
 begin
   lblCasa.FontColor := $FF747474;
@@ -258,6 +303,7 @@ begin
 
 end;
 
+{entrega em casa}
 procedure TFrmPrincipal.lblCasaClick(Sender: TObject);
 begin
   SelecionarEntrega(TLabel(Sender));

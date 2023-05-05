@@ -19,11 +19,11 @@ type
     QryGeral: TFDQuery;
     FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink;
     QryUsuario: TFDQuery;
+    TabPedido: TFDMemTable;
     procedure DataModuleCreate(Sender: TObject);
     procedure connBeforeConnect(Sender: TObject);
     procedure connAfterConnect(Sender: TObject);
   private
-
 
   public
     procedure Login(email, senha: string);
@@ -31,6 +31,9 @@ type
       cep: string);
     procedure SalvarUsuarioLocal(id_usuario : integer; email, nome, endereco,bairro, cidade, uf, cep : string );
     procedure ListarUsuarioLocal;
+    procedure Logout;
+    procedure ListarPedido(id_usuario: integer);
+    function JsonPedido(id_pedido: integer): TJsonObject;
   end;
 
 var
@@ -127,13 +130,13 @@ begin
   try
     json := TJSONObject.Create; //instaciar
     json.AddPair('nome', nome);  //corpo da requisição
-    json.AddPair('email', email); 
-    json.AddPair('senha', senha); 
+    json.AddPair('email', email);
+    json.AddPair('senha', senha);
     json.AddPair('endereco', endereco);
     json.AddPair('bairro', bairro);  
-    json.AddPair('cidade', cidade); 
+    json.AddPair('cidade', cidade);
     json.AddPair('uf ', uf);
-    json.AddPair('cep', cep);  
+    json.AddPair('cep', cep);
 
     //resposta
     resp := TRequest.New.BaseURL(BASE_URL)  // requisição
@@ -190,6 +193,65 @@ begin
       ExecSQL;
   end;
 
+end;
+
+{logout}
+procedure TDmUsuario.Logout;
+begin
+  with QryGeral do
+  begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('DELETE FROM TAB_USUARIO');
+      ExecSQL;
+
+      Active := False;
+      SQL.Clear;
+      SQL.Add('DELETE FROM TAB_CARRINHO_ITEM');
+      ExecSQL;
+
+      Active := False;
+      SQL.Clear;
+      SQL.Add('DELETE FROM TAB_CARRINHO');
+      ExecSQL;
+  end;
+end;
+
+{listar pedido}
+procedure TDmUsuario.ListarPedido(id_usuario: integer);
+var
+  resp: IResponse;
+begin
+  {resposta}
+  resp := TRequest.New.BaseURL(BASE_URL)  // requisição
+          .Resource('pedidos') //rota
+          .AddParam('id_usuario', id_usuario.ToString)
+          .DataSetAdapter(TabPedido)
+          .Accept('application/json')
+          .BasicAuthentication(USER_NAME, PASSWORD)//autenticação
+          .Get;
+
+  if (resp.StatusCode <> 200) then
+      raise Exception.Create(resp.Content)
+end;
+
+{json pedido}
+function TDmUsuario.JsonPedido(id_pedido: integer): TJsonObject;
+var
+  resp: IResponse;
+begin
+  {resposta}
+  resp := TRequest.New.BaseURL(BASE_URL)  // requisição
+          .Resource('pedidos') //rota
+          .ResourceSuffix(id_pedido.ToString)
+          .Accept('application/json')
+          .BasicAuthentication(USER_NAME, PASSWORD)//autenticação
+          .Get;
+
+  if (resp.StatusCode <> 200) then
+      raise Exception.Create(resp.Content)
+  else
+    result := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(resp.Content), 0) as TJSONObject;
 end;
 
 end.

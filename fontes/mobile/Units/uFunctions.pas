@@ -7,10 +7,11 @@ System.SysUtils, System.Net.HttpClient;
 
 procedure LoadImageFromURL (img: TBitmap; url : string);
 function Round2(aValue: double) : Double;
+function UTCtoDateBR(dt: string) : string;
 
 implementation
 
-//dowloand pela URL
+{dowloand pela URL}
 procedure LoadImageFromURL (img: TBitmap; url : string);
 var
   http: TNetHttpClient;
@@ -39,9 +40,16 @@ begin
   end;
 end;
 
-
+{2 casas decimais}
 function Round2(aValue: double) : Double;
 begin
    Round2:= Round(aValue*100)/100;
+end;
+
+{converter data Brasil}
+function UTCtoDateBR(dt: string) : string;
+begin
+  // 2023-04-05 15:23:52.000
+  Result := Copy(dt, 9,2) + '/' + Copy(dt, 6,2) + '/' + Copy(dt, 1, 4) + ' ' + Copy(dt, 12, 8);
 end;
 end.

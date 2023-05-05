@@ -1,13 +1,10 @@
 unit UnitPedido;
-
 interface
-
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.ListView.Types,
-  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
-
+  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, uLoading, uSession, uFunctions;
 type
   TFrmPedidos = class(TForm)
     lytToolBar: TLayout;
@@ -20,25 +17,28 @@ type
       const AItem: TListViewItem);
     procedure imgVoltarClick(Sender: TObject);
   private
-    procedure AddPedidoLv(id_pedido, qtd_itens : integer; nome, dt_pedido : string; vl_pedido: double);
-    procedure ListarPedidos;
     { Private declarations }
   public
     { Public declarations }
+    procedure AddPedidoLv(id_pedido, qtd_itens : integer;
+                                  nome, endereco, dt_pedido : string; vl_pedido: double);
+    procedure ListarPedidos;
+    procedure ThreadDadosTerminate(Sender: TObject);
   end;
 
 var
   FrmPedidos: TFrmPedidos;
 
 implementation
-
 {$R *.fmx}
 
 uses
-  UnitPrincipal, UnitPedidoDetalhe;
+  UnitPrincipal, UnitPedidoDetalhe, DataModule.Usuario;
 
-//list view
-procedure TFrmPedidos.AddPedidoLv(id_pedido, qtd_itens : integer; nome, dt_pedido : string; vl_pedido: double);
+{adicionar pedidos na list view}
+procedure TFrmPedidos.AddPedidoLv(id_pedido, qtd_itens : integer;
+                                  nome, endereco, dt_pedido : string;
+                                  vl_pedido: double);
 var
   img : TListItemImage;
   txt : TListItemText;
@@ -46,11 +46,9 @@ begin
   with lvPedido.Items.Add do
   begin
     Height := 120;
-
     Tag :=  id_pedido; //propriedade para salvar informações do tipo inteiro
-
     img :=  TListItemImage(Objects.FindDrawable('imgShop'));
-    img.Bitmap := imgShop.Bitmap;   // objeto fixo no form
+    img.Bitmap := imgShop.Bitmap;   //objeto fixo no form
 
     txt:= TListItemText(Objects.FindDrawable('txtNome'));
     txt.Text := nome;
@@ -58,39 +56,71 @@ begin
     txt:= TListItemText(Objects.FindDrawable('txtPedido'));
     txt.Text := 'Pedido: ' + id_pedido.ToString;
 
+    txt := TListItemText(Objects.FindDrawable('txtEndereco'));
+    txt.Text := endereco;
+
     txt:= TListItemText(Objects.FindDrawable('txtValor'));
     txt.Text := FormatFloat('R$#,##0.00', vl_pedido) + ' - ' + qtd_itens.ToString + ' itens ';
 
     txt:= TListItemText(Objects.FindDrawable('txtData'));
-    txt.Text := dt_pedido;
+    txt.Text := Copy(dt_pedido, 1, 16);
   end;
-
 end;
 
+{listar pedidos}
 procedure TFrmPedidos.ListarPedidos;
+var
+  t : TThread;
 begin
-  AddPedidoLv(65124, 3 , 'Pão de Açúcar', '15/01/2023', 142);
-  AddPedidoLv(65125, 1 , 'Pão de Açúcar', '15/01/2023', 98);
-  AddPedidoLv(65126, 8 , 'Pão de Açúcar', '15/01/2023', 10);
-  AddPedidoLv(65127, 4 , 'Pão de Açúcar', '15/01/2023', 205);
-  AddPedidoLv(65128, 10 , 'Pão de Açúcar', '15/01/2023', 56.99);
+  TLoading.Show(FrmPedidos, '');
+  lvPedido.Items.Clear;
+  lvPedido.BeginUpdate;
+
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+    DmUsuario.ListarPedido(TSession.ID_USUARIO);
+
+    with DmUsuario.TabPedido do
+    begin
+      while NOT Eof do
+      begin
+        //thread paralela para sicronizar
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         //adicionando os pedidos
+          AddPedidoLv(fieldbyname('id_pedido').asinteger,
+                          fieldbyname('qtd_itens').asinteger,
+                          fieldbyname('nome_estab').asstring,
+                          FieldByName('endereco').AsString,
+                          UTCtoDateBR(fieldbyname('dt_pedido').AsString),
+                          fieldbyname('vl_total').asfloat);
+        end);
+
+        Next;
+
+      end;
+    end;
+  end);
+
+  t.OnTerminate := ThreadDadosTerminate; //rotina de erro
+  t.Start;
 end;
 
-procedure TFrmPedidos.lvPedidoItemClick(const Sender: TObject;
-  const AItem: TListViewItem);
+{thread terminate dados}
+procedure TFrmPedidos.ThreadDadosTerminate(Sender: TObject);
 begin
-  if NOT Assigned(FrmPedidoDetalhe) then
-    Application.CreateForm(TFrmPedidoDetalhe, FrmPedidos);
+  lvPedido.EndUpdate;
+  TLoading.Hide;
 
-  FrmPedidoDetalhe.Show;
-
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      Exit;
+    end;
+  end;
 end;
-
-procedure TFrmPedidos.FormShow(Sender: TObject);
-begin
-  ListarPedidos;
-end;
-
 
 {voltar tela}
 procedure TFrmPedidos.imgVoltarClick(Sender: TObject);
@@ -98,4 +128,19 @@ begin
   close;
 end;
 
+{detalhes do pedido}
+procedure TFrmPedidos.lvPedidoItemClick(const Sender: TObject; const AItem: TListViewItem);
+begin
+  if NOT Assigned(FrmPedidoDetalhe) then
+    Application.CreateForm(TFrmPedidoDetalhe, FrmPedidos);
+
+  FrmPedidoDetalhe.id_pedido := AItem.Tag;
+  FrmPedidoDetalhe.Show;
+end;
+
+{show}
+procedure TFrmPedidos.FormShow(Sender: TObject);
+begin
+  ListarPedidos;
+end;
 end.
