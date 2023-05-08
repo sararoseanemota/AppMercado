@@ -68,7 +68,8 @@ controllerPedidos.post("/pedidos", function (req, res) {
             //desestruturação (declarando as variaveis, pegando dentro do objeto as variareis)
             const { id_mercado, id_usuario, dt_pedido, vl_subtotal, vl_entrega, vl_total, endereco, bairro, cidade, uf, cep } = req.body;
             // insert do pedido
-            let ssql = "insert into pedido(id_mercado, id_usuario, dt_pedido, vl_subtotal, vl_entrega, vl_total, endereco, bairro, cidade, uf, cep) values (?, ?, current_timestamp(), ?, ?, ?, ?, ?, ?, ?, ?) ";
+            let ssql = "insert into pedido(id_mercado, id_usuario, dt_pedido, vl_subtotal, vl_entrega, vl_total, endereco, bairro, cidade, uf, cep) "
+            ssql += "values (?, ?, current_timestamp() , ?, ?, ?, ?, ?, ?, ?, ?) ";
 
             //parametros para conexão
             conn.query(ssql, [id_mercado, id_usuario, vl_subtotal, vl_entrega, vl_total, endereco, bairro, cidade, uf, cep], function (err, result) {

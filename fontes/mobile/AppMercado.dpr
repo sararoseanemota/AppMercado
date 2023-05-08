@@ -18,8 +18,8 @@ uses
   DataModule.Mercado in 'dataModule\DataModule.Mercado.pas' {DmMercado: TDataModule},
   uConsts in 'Units\uConsts.pas',
   uFunctions in 'Units\uFunctions.pas',
-  UnitInstala in 'D:\AppMonitorInstalador\fontes\mobile\UnitInstala.pas' {FrmInstala},
-  uSession in 'Units\uSession.pas';
+  uSession in 'Units\uSession.pas',
+  UnitPerfil in 'UnitPerfil.pas' {FrmPerfil};
 
 {$R *.res}
 

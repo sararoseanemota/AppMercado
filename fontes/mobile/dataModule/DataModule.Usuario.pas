@@ -24,7 +24,6 @@ type
     procedure connBeforeConnect(Sender: TObject);
     procedure connAfterConnect(Sender: TObject);
   private
-
   public
     procedure Login(email, senha: string);
     procedure CriarConta(nome, email, senha, endereco, bairro, cidade, uf,
@@ -34,16 +33,21 @@ type
     procedure Logout;
     procedure ListarPedido(id_usuario: integer);
     function JsonPedido(id_pedido: integer): TJsonObject;
+    procedure ListarUsuarioId(id_usuario: integer);
+    procedure EditarUsuario(id_usuario: integer;
+                                nome, email, senha, endereco, bairro, cidade, uf, cep : string);
   end;
 
 var
   DmUsuario: TDmUsuario;
 
 implementation
+
 {%CLASSGROUP 'FMX.Controls.TControl'}
+
 {$R *.dfm}
 
-//create
+{create}
 procedure TDmUsuario.DataModuleCreate(Sender: TObject);
 begin
   //TDataSetSerializeConfig.GetInstance.CaseNameDefinition := TCaseNameDefinition.cndLowerCamelCase;
@@ -51,7 +55,7 @@ begin
   conn.Connected := true;
 end;
 
-// login
+{login}
 procedure TDmUsuario.Login(email, senha: string);
 var
   resp: IResponse;
@@ -80,7 +84,7 @@ begin
 
 end;
 
-//depois de conectar criar tabelas
+{depois de conectar criar tabelas}
 procedure TDmUsuario.connAfterConnect(Sender: TObject);
 begin
   //usuario
@@ -110,7 +114,7 @@ begin
                'VALOR_TOTAL DECIMAL(9,2))');
 end;
 
-//antes de conectar criar o banco
+{antes de conectar criar o banco}
 procedure TDmUsuario.connBeforeConnect(Sender: TObject);
 begin
   conn.DriverName := 'SQLite';
@@ -121,7 +125,7 @@ begin
   {$ENDIF}
 end;
 
-//criar conta
+{criar conta}
 procedure TDmUsuario.CriarConta(nome, email, senha, endereco, bairro, cidade, uf, cep: string);
 var
   resp: IResponse;
@@ -156,7 +160,7 @@ begin
 
 end;
 
-//Listar Usuario Local
+{Listar Usuario Local}
 procedure TDmUsuario.ListarUsuarioLocal;
 begin
   with QryUsuario do
@@ -166,10 +170,9 @@ begin
       SQL.Add('SELECT * FROM TAB_USUARIO');
       Active := true;
   end;
-
 end;
 
-//Salvar o usuario Local
+{Salvar o usuario Local}
 procedure TDmUsuario.SalvarUsuarioLocal(id_usuario : integer; email, nome, endereco,bairro, cidade, uf, cep : string );
 begin
   with QryUsuario do
@@ -252,6 +255,61 @@ begin
       raise Exception.Create(resp.Content)
   else
     result := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(resp.Content), 0) as TJSONObject;
+end;
+
+{listar usuario}
+procedure TDmUsuario.ListarUsuarioId(id_usuario : integer);
+var
+  resp: IResponse;
+begin
+  TabUsuario.FieldDefs.Clear;
+  {resposta}
+  resp := TRequest.New.BaseURL(BASE_URL)
+          .Resource('usuarios')
+          .ResourceSuffix(id_usuario.ToString)
+          .DataSetAdapter(TabUsuario)
+          .Accept('application/json')
+          .BasicAuthentication(USER_NAME, PASSWORD)
+          .Get;
+
+  if (resp.StatusCode <> 200) then
+      raise Exception.Create(resp.Content);
+end;
+
+{editar usuario}
+procedure TDmUsuario.EditarUsuario(id_usuario: integer;
+                                nome, email, senha, endereco, bairro, cidade, uf, cep : string);
+var
+  resp: IResponse;
+  json: TJSONObject;
+begin
+  try
+    json := TJSONObject.Create; //instaciar
+    json.AddPair('nome', nome); //corpo da requisição
+    json.AddPair('email', email); //corpo da requisição
+    json.AddPair('senha', senha);
+    json.AddPair('endereco', endereco);
+    json.AddPair('bairro', bairro);
+    json.AddPair('cidade', cidade);
+    json.AddPair('uf', uf);
+    json.AddPair('cep', cep);
+
+    {resposta}
+    resp := TRequest.New.BaseURL(BASE_URL)
+            .Resource('usuarios')
+            .ResourceSuffix(id_usuario.ToString)
+            .AddBody(json.ToJSON)
+            .Accept('application/json')
+            .BasicAuthentication(USER_NAME, PASSWORD)
+            .Put;
+
+    if (resp.StatusCode <> 200) then
+        raise Exception.Create(resp.Content);
+
+  finally
+    json.DisposeOf; {destruindo o objeto json}
+  end;
+
 end;
 
 end.

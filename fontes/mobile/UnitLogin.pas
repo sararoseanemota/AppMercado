@@ -109,10 +109,10 @@ begin
     Application.MainForm := FrmPrincipal; //definir form principal
     TSession.ID_USUARIO := DmUsuario.QryUsuario.FieldByName('id_usuario').AsInteger;
 
-    FrmPrincipal.lblNome.Text := DmUsuario.QryUsuario.FieldByName('nome').AsString;
-    FrmPrincipal.lblEmail.Text := DmUsuario.QryUsuario.FieldByName('email').AsString;
+    FrmPrincipal.lblMenuNome.Text := DmUsuario.QryUsuario.FieldByName('nome').AsString;
+    FrmPrincipal.lblMenuEmail.Text := DmUsuario.QryUsuario.FieldByName('email').AsString;
     FrmPrincipal.Show; //abrir o form
-    FrmLogin.Close; // fechar o form loginend;
+    FrmLogin.Close; // fechar o form login;
   end;
 end;
 
@@ -248,8 +248,8 @@ begin
 
   Application.MainForm := FrmPrincipal; //definir form principal
   TSession.ID_USUARIO := DmUsuario.QryUsuario.FieldByName('id_usuario').AsInteger;
-  FrmPrincipal.lblNome.Text := DmUsuario.QryUsuario.FieldByName('nome').AsString;
-  FrmPrincipal.lblEmail.Text := DmUsuario.QryUsuario.FieldByName('email').AsString;
+  FrmPrincipal.lblMenuNome.Text := DmUsuario.QryUsuario.FieldByName('nome').AsString;
+  FrmPrincipal.lblMenuEmail.Text := DmUsuario.QryUsuario.FieldByName('email').AsString;
   FrmPrincipal.Show; //abrir o form
   FrmLogin.Close; // fechar o form login
 end;

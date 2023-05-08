@@ -1,0 +1,158 @@
+unit UnitPerfil;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Edit, uLoading, uSession;
+
+type
+  TFrmPerfil = class(TForm)
+    lytToolBar: TLayout;
+    lblTitulo: TLabel;
+    imgVoltar: TImage;
+    imgSalvar: TImage;
+    lytConta2: TLayout;
+    ltyConta2: TLayout;
+    rctUf: TRectangle;
+    edtUf: TEdit;
+    rctCidade: TRectangle;
+    edtCidade: TEdit;
+    rctCep: TRectangle;
+    edtEndereco: TEdit;
+    rctEndereco: TRectangle;
+    edtNome: TEdit;
+    rctBairro: TRectangle;
+    edtBairro: TEdit;
+    Rectangle1: TRectangle;
+    edtCep: TEdit;
+    Rectangle2: TRectangle;
+    edtEmail: TEdit;
+    Rectangle3: TRectangle;
+    edtSenha: TEdit;
+    procedure FormShow(Sender: TObject);
+    procedure imgSalvarClick(Sender: TObject);
+    procedure imgVoltarClick(Sender: TObject);
+  private
+    procedure ThreadDadosTerminate(Sender: TObject);
+    procedure ThreadSalvarTerminate(Sender: TObject);
+
+
+    { Private declarations }
+  public
+    { Public declarations }
+    procedure CarregarDados;
+  end;
+
+var
+  FrmPerfil: TFrmPerfil;
+
+implementation
+
+{$R *.fmx}
+
+uses DataModule.Usuario;
+
+{show}
+procedure TFrmPerfil.FormShow(Sender: TObject);
+begin
+  CarregarDados;
+end;
+
+{salvar edição}
+procedure TFrmPerfil.imgSalvarClick(Sender: TObject);
+var
+  t : TThread;
+begin
+  TLoading.Show(FrmPerfil, '');
+
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+    Sleep(1500); //teste do loading
+
+    //salvar dados do usuário
+    DmUsuario.EditarUsuario(TSession.ID_USUARIO, edtNome.Text, edtEmail.Text, edtSenha.Text, edtEndereco.Text, edtBairro.Text,
+                                                  edtCidade.Text, edtUf.Text, edtCep.Text);
+  end);
+
+  t.OnTerminate := ThreadSalvarTerminate; //rotina de erro
+  t.Start;
+end;
+
+procedure TFrmPerfil.imgVoltarClick(Sender: TObject);
+begin
+  close;
+end;
+
+{carregar dados}
+procedure TFrmPerfil.CarregarDados;
+var
+  t : TThread;
+begin
+  TLoading.Show(FrmPerfil, '');
+
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+    Sleep(1500); //teste do loading
+
+    //buscando os dados do usuario
+    DmUsuario.ListarUsuarioId(TSession.ID_USUARIO);
+
+      with DmUsuario.TabUsuario do
+      begin
+      //thread paralela
+      TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+           edtNome.Text := FieldByName('nome').AsString;
+           edtEmail.Text := fieldbyname('email').asstring;
+           edtSenha.Text := fieldbyname('senha').asstring;
+           edtEndereco.Text := fieldbyname('endereco').asstring;
+           edtBairro.Text := fieldbyname('bairro').asstring;
+           edtCidade.Text := fieldbyname('cidade').asstring;
+           edtUf.Text := fieldbyname('uf').asstring;
+           edtCep.Text := fieldbyname('cep').asstring;
+
+        end);
+      end;
+  end);
+
+  t.OnTerminate := ThreadDadosTerminate; //rotina de erro
+  t.Start;
+end;
+
+{thread terminate dados}
+procedure TFrmPerfil.ThreadDadosTerminate(Sender: TObject);
+begin
+  TLoading.Hide; //parar de exibir a bolinha executando
+
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+        ShowMessage(Exception(TThread(sender).FatalException).Message);
+        Exit;
+    end;
+  end;
+end;
+
+{thread terminate editar}
+procedure TFrmPerfil.ThreadSalvarTerminate(Sender: TObject);
+begin
+  TLoading.Hide; //parar de exibir a bolinha executando
+
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+        ShowMessage(Exception(TThread(sender).FatalException).Message);
+        Exit;
+    end;
+  end;
+
+  //fechar tela quando a thread finalizar
+  close;
+end;
+
+
+end.

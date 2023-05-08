@@ -132,7 +132,7 @@ end;
 procedure TFrmPedidos.lvPedidoItemClick(const Sender: TObject; const AItem: TListViewItem);
 begin
   if NOT Assigned(FrmPedidoDetalhe) then
-    Application.CreateForm(TFrmPedidoDetalhe, FrmPedidos);
+    Application.CreateForm(TFrmPedidoDetalhe, FrmPedidoDetalhe);
 
   FrmPedidoDetalhe.id_pedido := AItem.Tag;
   FrmPedidoDetalhe.Show;

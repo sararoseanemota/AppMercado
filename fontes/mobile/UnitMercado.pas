@@ -68,8 +68,7 @@ implementation
 uses UnitPrincipal, Frame.ProdutoCard, UnitProduto, DataModule.Mercado, UnitCarrinho;
 
 
-
-//baixar imagens
+{baixar imagens}
 procedure TFrmMercado.DownloadFoto(lb: TListBox);
 var
     t: TThread;

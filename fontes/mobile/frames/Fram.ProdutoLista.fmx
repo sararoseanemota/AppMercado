@@ -91,7 +91,7 @@ object FrameProdutoLista: TFrameProdutoLista
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
       TextSettings.Font.Size = 14.000000000000000000
-      TextSettings.FontColor = xFF565656
+      TextSettings.FontColor = xFF9E9E9E
       TextSettings.VertAlign = Leading
       Text = '02  x  R$3,00/kg'
       TabOrder = 1
@@ -108,7 +108,7 @@ object FrameProdutoLista: TFrameProdutoLista
     Size.Height = 55.000000000000000000
     Size.PlatformDefault = False
     TextSettings.Font.Size = 14.000000000000000000
-    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
     TextSettings.FontColor = xFF747474
     TextSettings.HorzAlign = Trailing
     TextSettings.VertAlign = Leading

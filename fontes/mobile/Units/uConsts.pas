@@ -4,7 +4,7 @@ interface
 const
     USER_NAME ='nutrifit';
     PASSWORD = '123456';
-    BASE_URL = 'http://localhost:3000';
+    BASE_URL = 'http://192.168.1.103:3000';
 
 implementation
 
